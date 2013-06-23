@@ -19,7 +19,11 @@ namespace DashMap.ViewModels
         public string OverlayText
         {
             get { return m_overlayText; }
-            set { m_overlayText = value; NotifyPropertyChanged("OverlayText"); }
+            set
+            {
+                m_overlayText = value;
+                NotifyPropertyChanged("OverlayText");
+            }
         }
 
         public MapCartographicMode MapType
