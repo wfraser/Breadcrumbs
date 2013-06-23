@@ -237,7 +237,7 @@ namespace DashMap.ViewModels
             m_isGpsEnabled = false;
             m_gps = new GPS(this);
             m_units = UnitMode.Imperial;
-            m_coordMode = CoordinateMode.Decimal;
+            m_coordMode = CoordinateMode.DMS;
         }
 
         public void ToggleGps()
