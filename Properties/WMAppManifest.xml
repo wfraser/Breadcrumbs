@@ -4,7 +4,7 @@
   <Languages xmlns="">
     <Language code="en-US" />
   </Languages>
-  <App xmlns="" ProductID="{bcc05806-4a4f-4716-a66c-a4d5a62a9661}" Title="Dash Map" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="William R. Fraser" Description="A GPS map designed for real-time tracking on your car's dashboard." Publisher="Codewise.org" PublisherID="{a11c718e-575b-4694-b175-4dfb22f26d3c}">
+  <App xmlns="" ProductID="{bcc05806-4a4f-4716-a66c-a4d5a62a9661}" Title="DashMap" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="William R. Fraser" Description="A GPS map designed for real-time tracking on your car's dashboard." Publisher="Codewise.org" PublisherID="{a11c718e-575b-4694-b175-4dfb22f26d3c}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
