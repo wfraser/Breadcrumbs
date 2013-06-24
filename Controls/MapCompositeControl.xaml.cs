@@ -62,7 +62,7 @@ namespace DashMap
             {
                 case "CurrentGeoCoordinate":
                     GeoCoordinate center = m_viewModel.MainVM.CurrentGeoCoordinate;
-                    CurrentPositionCircle.Path = Utils.MakeCircle(center, Math.Max(center.HorizontalAccuracy, center.VerticalAccuracy));
+                    CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
 
                     if (m_viewModel.MainVM.IsTrackingEnabled)
                     {
