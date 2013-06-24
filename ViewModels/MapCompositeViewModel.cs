@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ using Microsoft.Phone.Maps.Controls;
 
 namespace DashMap.ViewModels
 {
-    public class MapCompositeViewModel : INotifyPropertyChanged
+    public class MapCompositeViewModel : ViewModelBase
     {
         public MainViewModel MainVM
         {
@@ -80,19 +79,6 @@ namespace DashMap.ViewModels
             finally
             {
                 OverlayText = string.Empty;
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(String propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (null != handler)
-            {
-                App.RootFrame.Dispatcher.BeginInvoke(() =>
-                {
-                    handler(this, new PropertyChangedEventArgs(propertyName));
-                });
             }
         }
 

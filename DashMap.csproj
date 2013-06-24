@@ -120,6 +120,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MapCompositeViewModel.cs" />
     <Compile Include="ViewModels\MapSidebarViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -153,6 +154,8 @@
     <Content Include="Assets\ApplicationIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Icons\back.png" />
+    <Content Include="Assets\Icons\next.png" />
     <Content Include="Assets\Icons\transport.pause.png" />
     <Content Include="Assets\Icons\transport.play.png" />
     <Content Include="Assets\Tiles\FlipCycleTileLarge.png">

@@ -35,18 +35,20 @@
     <Grid x:Name="LayoutRoot"
           Background="Transparent">
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
+            <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
+        <local:MapCompositeControl x:Name="MapComposite"
+                                   Grid.Column="1" Grid.ColumnSpan="2"
+                                   DataContext="{Binding MapViewModel}"/>
+
         <local:MapSidebarControl x:Name="Sidebar"
+                                 Grid.ColumnSpan="2"
                                  IsGpsEnabled="{Binding MainVM.IsGpsEnabled}"
                                  IsTrackingEnabled="{Binding MainVM.IsTrackingEnabled}"
                                  DataContext="{Binding SidebarViewModel}"/>
-        
-        <local:MapCompositeControl x:Name="MapComposite"
-                                   Grid.Column="1"
-                                   DataContext="{Binding MapViewModel}"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

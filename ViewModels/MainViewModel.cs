@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Device.Location;
 using Microsoft.Phone.Maps.Controls;
 using Windows.Devices.Geolocation;
@@ -9,7 +8,7 @@ using DashMap.Resources;
 
 namespace DashMap.ViewModels
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : ViewModelBase
     {
         public MapCompositeViewModel MapViewModel
         {
@@ -306,19 +305,6 @@ namespace DashMap.ViewModels
                     break;
             }
             m_mapViewModel.MapType = mapType;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(String propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (null != handler)
-            {
-                App.RootFrame.Dispatcher.BeginInvoke(() =>
-                {
-                    handler(this, new PropertyChangedEventArgs(propertyName));
-                });
-            }
         }
 
         private UnitMode m_units;

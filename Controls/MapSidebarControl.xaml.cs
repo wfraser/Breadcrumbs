@@ -17,7 +17,6 @@ namespace DashMap
         static void OnIsGpsEnabledChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
         {
             var sidebar = (MapSidebarControl)target;
-            sidebar.GpsToggle.Text = "GPS " + ((bool)e.NewValue ? "Off" : "On");
             sidebar.GpsToggle.ImageSource = new Uri("/Assets/Icons/transport." + ((bool)e.NewValue ? "pause" : "play") + ".png", UriKind.Relative);
             sidebar.GpsToggle.IsEnabled = true;
         }
@@ -32,7 +31,6 @@ namespace DashMap
         static void OnIsTrackingEnabledChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
         {
             var sidebar = (MapSidebarControl)target;
-            sidebar.TrackToggle.Text = "Track " + ((bool)e.NewValue ? "Off" : "On");
             sidebar.TrackToggle.ImageSource = new Uri("/Assets/Icons/transport." + ((bool)e.NewValue ? "pause" : "play") + ".png", UriKind.Relative);
             sidebar.TrackToggle.IsEnabled = true;
         }
@@ -50,14 +48,12 @@ namespace DashMap
         private void GpsToggle_Click(object sender, RoutedEventArgs e)
         {
             GpsToggle.IsEnabled = false;
-            GpsToggle.Text = "...";
             m_viewModel.MainVM.ToggleGps();
         }
 
         private void TrackToggle_Click(object sender, RoutedEventArgs e)
         {
             TrackToggle.IsEnabled = false;
-            TrackToggle.Text = "...";
             m_viewModel.MainVM.ToggleTracking();
         }
 
@@ -69,6 +65,20 @@ namespace DashMap
         private void MapToggle_Click(object sender, RoutedEventArgs e)
         {
             m_viewModel.MainVM.CycleMapType();
+        }
+
+        private void MenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_viewModel.IsExpanded)
+            {
+                MenuButton.ImageSource = new Uri("/Assets/Icons/next.png", UriKind.Relative);
+                m_viewModel.IsExpanded = false;
+            }
+            else
+            {
+                MenuButton.ImageSource = new Uri("/Assets/Icons/back.png", UriKind.Relative);
+                m_viewModel.IsExpanded = true;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

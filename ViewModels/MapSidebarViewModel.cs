@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 
 namespace DashMap.ViewModels
 {
-    public class MapSidebarViewModel
+    public class MapSidebarViewModel : ViewModelBase
     {
         public MainViewModel MainVM
         {
             get { return m_mainVM; }
+        }
+
+        public bool IsExpanded
+        {
+            get { return m_isExpanded; }
+            set
+            {
+                m_isExpanded = value;
+                NotifyPropertyChanged("IsExpanded");
+            }
         }
 
         public MapSidebarViewModel(MainViewModel mainVM)
@@ -18,6 +28,7 @@ namespace DashMap.ViewModels
             m_mainVM = mainVM;
         }
 
+        private bool m_isExpanded;
         private MainViewModel m_mainVM;
     }
 }

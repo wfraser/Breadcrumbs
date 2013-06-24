@@ -9,20 +9,30 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    d:DesignHeight="480" d:DesignWidth="200"
+    d:DesignHeight="480" d:DesignWidth="360"
     Loaded="OnLoaded"
     x:Name="SidebarRoot">
 
-    <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
-        <StackPanel>
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
+            <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Background="{StaticResource PhoneChromeBrush}">
+            <local:ImageButton x:Name="MenuButton"
+                               Text="Menu"
+                               ImageSource="/Assets/Icons/next.png"
+                               ImageWidth="32" ImageHeight="32"
+                               Click="MenuButton_Click"/>
+            
             <local:ImageButton x:Name="GpsToggle"
-                               Text="GPS On"
+                               Text="GPS"
                                ImageSource="/Assets/Icons/transport.play.png"
                                ImageWidth="32" ImageHeight="32"
                                Click="GpsToggle_Click"/>
             
             <local:ImageButton x:Name="TrackToggle"
-                               Text="Track On"
+                               Text="Track"
                                ImageSource="/Assets/Icons/transport.play.png"
                                ImageWidth="32" ImageHeight="32"
                                Click="TrackToggle_Click"/>
@@ -45,7 +55,7 @@
                 <TextBlock Grid.Row="0" Text="Lat: " HorizontalAlignment="Right"/>
                 <TextBlock Grid.Row="1" Text="Lng: " HorizontalAlignment="Right"/>
                 <TextBlock Grid.Row="2" Text="Alt: " HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="3" Text="Speed: " HorizontalAlignment="Right"/>
+                <TextBlock Grid.Row="3" Text="Spd: " HorizontalAlignment="Right"/>
                 <TextBlock Grid.Row="4" Text="Hdg: " HorizontalAlignment="Right"/>
                 <TextBlock Grid.Row="5" Text="Acc: " HorizontalAlignment="Right"/>
                 <TextBlock Grid.Row="6" Text="Src: " HorizontalAlignment="Right"/>
@@ -58,14 +68,22 @@
                 <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MainVM.Accuracy}"/>
                 <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding MainVM.Source}"/>
             </Grid>
-            
-            <Button x:Name="ClearButton"
-                    Content="Clear Track"
-                    Click="ClearButton_Click"/>
-            
-            <Button x:Name="MapToggle"
+        </StackPanel>
+        
+        <Border BorderBrush="#333333"
+                BorderThickness="1,0,0,0"
+                Grid.Column="1"
+                Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Grid.Column="1"
+                        Background="{StaticResource PhoneChromeBrush}">
+                <Button x:Name="MapToggle"
                     Content="Map Type"
                     Click="MapToggle_Click"/>
-        </StackPanel>
+
+                <Button x:Name="ClearButton"
+                    Content="Clear Track"
+                    Click="ClearButton_Click"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>
