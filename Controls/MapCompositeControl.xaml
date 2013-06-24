@@ -37,12 +37,23 @@
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   Grid.ColumnSpan="2" Grid.RowSpan="2"
-                  CartographicMode="{Binding MapType}"
-                  Center="{Binding MainVM.CurrentGeoCoordinate}"
+                  CartographicMode="{Binding MapType, Mode=TwoWay}"
+                  Center="{Binding MainVM.CurrentGeoCoordinate, Mode=TwoWay}"
                   ViewChanging="MapControl_ViewChanging"
                   ViewChanged="MapControl_ViewChanged" Background="{StaticResource PhoneBackgroundBrush}"
-                  Loaded="MapControl_Loaded"/>
-        
+                  Loaded="MapControl_Loaded">
+            <maps:Map.MapElements>
+                <maps:MapPolyline x:Name="Track"
+                                  StrokeColor="Crimson"
+                                  StrokeThickness="5"
+                                  />
+                <maps:MapPolygon x:Name="CurrentPositionCircle"
+                                 FillColor="#300000FF"
+                                 StrokeColor="Blue"
+                                 StrokeThickness="5"/>
+            </maps:Map.MapElements>
+        </maps:Map>
+
         <Border Background="#80000000"><!-- Black, 50% opacity -->
             <TextBlock x:Name="OverlayText"
                        HorizontalAlignment="Left"

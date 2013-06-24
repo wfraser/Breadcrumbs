@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Navigation;
+using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
@@ -24,24 +26,50 @@ namespace DashMap
         {
             m_viewModel = (ViewModels.MapCompositeViewModel)DataContext;
 
+            m_viewModel.MainVM.PropertyChanged += MainVM_PropertyChanged;
+            m_viewModel.MainVM.TrackCleared += MainVM_TrackCleared;
+
             if (m_mapLoaded)
                 m_viewModel.OverlayText = string.Empty;
 
             m_viewModel.GetCurrentLocation().ContinueWith(x =>
             {
-                var location = x.Result;
+                Windows.Devices.Geolocation.Geoposition location = x.Result;
                 if (location == null)
                 {
                     // Leave it at its default. (or set to (47.622344,-122.325865)?)
                 }
                 else
                 {
-                    MapControl.Dispatcher.BeginInvoke(new Action(() => {
-                        MapControl.Center = Utils.ConvertGeocoordinate(location.Coordinate);
-                        MapControl.ZoomLevel = 15;
-                    }));
+                    m_viewModel.MainVM.CurrentPosition = location.Coordinate;
+                    MapControl.Dispatcher.BeginInvoke(() =>
+                        {
+                            MapControl.ZoomLevel = 15;
+                        });
                 }
             });
+        }
+
+        void MainVM_TrackCleared()
+        {
+            Track.Path.Clear();
+        }
+
+        void MainVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // This is to work around the lack of dependency properties in most of the map controls.
+            switch (e.PropertyName)
+            {
+                case "CurrentGeoCoordinate":
+                    GeoCoordinate center = m_viewModel.MainVM.CurrentGeoCoordinate;
+                    CurrentPositionCircle.Path = Utils.MakeCircle(center, Math.Max(center.HorizontalAccuracy, center.VerticalAccuracy));
+
+                    if (m_viewModel.MainVM.IsTrackingEnabled)
+                    {
+                        Track.Path.Add(center);
+                    }
+                    break;
+            }
         }
 
         private void MapControl_ViewChanging(object sender, MapViewChangingEventArgs e)
@@ -59,6 +87,9 @@ namespace DashMap
             m_mapLoaded = true;
             if (m_viewModel != null)
                 m_viewModel.OverlayText = string.Empty;
+
+            Track = MapControl.MapElements[0] as MapPolyline;
+            CurrentPositionCircle = MapControl.MapElements[1] as MapPolygon;
         }
 
         bool m_mapLoaded;

@@ -29,7 +29,11 @@ namespace DashMap.ViewModels
         public MapCartographicMode MapType
         {
             get { return m_mapType; }
-            set { m_mapType = value; NotifyPropertyChanged("MapType"); }
+            set
+            {
+                m_mapType = value;
+                NotifyPropertyChanged("MapType");
+            }
         }
 
         public MapCompositeViewModel(MainViewModel mainVM)
@@ -56,7 +60,7 @@ namespace DashMap.ViewModels
                     maximumAge: TimeSpan.FromMinutes(5),
                     timeout: TimeSpan.FromSeconds(10));
 
-                m_mainVM.CurrentPosition = position;
+                m_mainVM.CurrentPosition = position.Coordinate;
 
                 return position;
             }

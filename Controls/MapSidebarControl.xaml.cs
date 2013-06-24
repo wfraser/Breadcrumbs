@@ -12,7 +12,8 @@ namespace DashMap
 {
     public partial class MapSidebarControl : UserControl
     {
-        static DependencyProperty IsGpsEnabledProperty = DependencyProperty.Register("IsGpsEnabled", typeof(bool), typeof(MapSidebarControl), new PropertyMetadata(new PropertyChangedCallback(OnIsGpsEnabledChanged)));
+        static DependencyProperty IsGpsEnabledProperty = DependencyProperty.Register("IsGpsEnabled", typeof(bool), typeof(MapSidebarControl),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsGpsEnabledChanged)));
         static void OnIsGpsEnabledChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
         {
             var sidebar = (MapSidebarControl)target;
@@ -24,6 +25,21 @@ namespace DashMap
         {
             get { return (bool)GetValue(IsGpsEnabledProperty); }
             set { SetValue(IsGpsEnabledProperty, value); }
+        }
+
+        static DependencyProperty IsTrackingEnabledProperty = DependencyProperty.Register("IsTrackingEnabled", typeof(bool), typeof(MapSidebarControl),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsTrackingEnabledChanged)));
+        static void OnIsTrackingEnabledChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
+        {
+            var sidebar = (MapSidebarControl)target;
+            sidebar.TrackToggle.Text = "Track " + ((bool)e.NewValue ? "Off" : "On");
+            sidebar.TrackToggle.ImageSource = new Uri("/Assets/Icons/transport." + ((bool)e.NewValue ? "pause" : "play") + ".png", UriKind.Relative);
+            sidebar.TrackToggle.IsEnabled = true;
+        }
+        public bool IsTrackingEnabled
+        {
+            get { return (bool)GetValue(IsTrackingEnabledProperty); }
+            set { SetValue(IsTrackingEnabledProperty, value); }
         }
 
         public MapSidebarControl()

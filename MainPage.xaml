@@ -41,6 +41,7 @@
         
         <local:MapSidebarControl x:Name="Sidebar"
                                  IsGpsEnabled="{Binding MainVM.IsGpsEnabled}"
+                                 IsTrackingEnabled="{Binding MainVM.IsTrackingEnabled}"
                                  DataContext="{Binding SidebarViewModel}"/>
         
         <local:MapCompositeControl x:Name="MapComposite"

@@ -11,6 +11,16 @@ namespace DashMap.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        public MapCompositeViewModel MapViewModel
+        {
+            get { return m_mapViewModel; }
+        }
+
+        public MapSidebarViewModel SidebarViewModel
+        {
+            get { return m_sidebarViewModel; }
+        }
+
         public GPS GPS
         {
             get { return m_gps; }
@@ -26,14 +36,14 @@ namespace DashMap.ViewModels
             }
         }
 
-        public MapCompositeViewModel MapViewModel
+        public bool IsTrackingEnabled
         {
-            get { return m_mapViewModel; }
-        }
-
-        public MapSidebarViewModel SidebarViewModel
-        {
-            get { return m_sidebarViewModel; }
+            get { return m_isTrackingEnabled; }
+            set
+            {
+                m_isTrackingEnabled = value;
+                NotifyPropertyChanged("IsTrackingEnabled");
+            }
         }
 
         public string Latitude
@@ -43,7 +53,7 @@ namespace DashMap.ViewModels
                 if (m_currentPosition == null)
                     return "-";
 
-                double lat = m_currentPosition.Coordinate.Latitude;
+                double lat = m_currentPosition.Latitude;
 
                 switch (m_coordMode)
                 {
@@ -64,7 +74,7 @@ namespace DashMap.ViewModels
                 if (m_currentPosition == null)
                     return "-";
 
-                double lng = m_currentPosition.Coordinate.Longitude;
+                double lng = m_currentPosition.Longitude;
 
                 switch (m_coordMode)
                 {
@@ -85,7 +95,7 @@ namespace DashMap.ViewModels
                 if (m_currentPosition == null)
                     return "-";
 
-                double? alt = m_currentPosition.Coordinate.Altitude;
+                double? alt = m_currentPosition.Altitude;
                 if (!alt.HasValue)
                     return "-";
 
@@ -108,7 +118,7 @@ namespace DashMap.ViewModels
                 if (m_currentPosition == null)
                     return "-";
 
-                double? spd = m_currentPosition.Coordinate.Speed;
+                double? spd = m_currentPosition.Speed;
                 if (!spd.HasValue)
                     return "-";
 
@@ -134,7 +144,7 @@ namespace DashMap.ViewModels
                 if (m_currentPosition == null)
                     return "-";
 
-                double? hdg = m_currentPosition.Coordinate.Heading;
+                double? hdg = m_currentPosition.Heading;
                 if (!hdg.HasValue || double.IsNaN(hdg.Value))
                     return "-";
 
@@ -156,7 +166,7 @@ namespace DashMap.ViewModels
                 if (m_currentPosition == null)
                     return "-";
 
-                double accuracy = m_currentPosition.Coordinate.Accuracy;
+                double accuracy = m_currentPosition.Accuracy;
                 switch (m_units)
                 {
                     case UnitMode.Metric:
@@ -175,7 +185,7 @@ namespace DashMap.ViewModels
                 if (m_currentPosition == null)
                     return "No Data";
 
-                switch (m_currentPosition.Coordinate.PositionSource)
+                switch (m_currentPosition.PositionSource)
                 {
                     case PositionSource.Cellular:
                         return "Cellular";
@@ -188,7 +198,7 @@ namespace DashMap.ViewModels
             }
         }
 
-        public Geoposition CurrentPosition
+        public Geocoordinate CurrentPosition
         {
             get { return m_currentPosition; }
             set
@@ -210,7 +220,7 @@ namespace DashMap.ViewModels
         {
             get
             {
-                if (m_currentPosition == null || m_currentPosition.Coordinate == null)
+                if (m_currentPosition == null)
                 {
                     // This is the Map default
                     return new GeoCoordinate(
@@ -225,8 +235,18 @@ namespace DashMap.ViewModels
                 }
                 else
                 {
-                    return Utils.ConvertGeocoordinate(m_currentPosition.Coordinate);
+                    return Utils.ConvertGeocoordinate(m_currentPosition);
                 }
+            }
+
+            set
+            {
+                // ignored
+                // We need this because the binding from CurrentGeoCoordinate to Map.Center
+                // has to be TwoWay in order for it to work more than once. XAML WTF.
+                // The canonical form of the current position is of type
+                // Windows.Devices.Geolocation.Geoposition, which cannot be constructed or
+                // modified.
             }
         }
 
@@ -254,10 +274,17 @@ namespace DashMap.ViewModels
 
         public void ToggleTracking()
         {
+            IsTrackingEnabled = !IsTrackingEnabled;
         }
 
+        public event Action TrackCleared;
         public void ClearTrack()
         {
+            var handler = TrackCleared;
+            if (handler != null)
+            {
+                handler();
+            }
         }
 
         public void CycleMapType()
@@ -297,10 +324,10 @@ namespace DashMap.ViewModels
         private UnitMode m_units;
         private CoordinateMode m_coordMode;
         private bool m_isGpsEnabled;
+        private bool m_isTrackingEnabled;
         private GPS m_gps;
         private MapCompositeViewModel m_mapViewModel;
         private MapSidebarViewModel m_sidebarViewModel;
-        private Geoposition m_currentPosition;
-        private GeoCoordinate m_currentGeoCoordinate;
+        private Geocoordinate m_currentPosition;
     }
 }

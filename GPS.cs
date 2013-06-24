@@ -36,7 +36,7 @@ namespace DashMap
 
         void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
-            m_mainVM.CurrentPosition = args.Position;
+            m_mainVM.CurrentPosition = args.Position.Coordinate;
         }
 
         void Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
