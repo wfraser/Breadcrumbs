@@ -71,19 +71,21 @@
                 
                 <Grid Grid.Row="7" Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>       <!-- padding -->
+                        <ColumnDefinition Width="*"/>       <!-- hour -->
+                        <ColumnDefinition Width="Auto"/>    <!-- ":" -->
+                        <ColumnDefinition Width="*"/>       <!-- minute -->
+                        <ColumnDefinition Width="Auto"/>    <!-- ":" -->
+                        <ColumnDefinition Width="*"/>       <!-- second -->
+                        <ColumnDefinition Width="Auto"/>    <!-- offset -->
+                        <ColumnDefinition Width="*"/>       <!-- padding -->
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="1" Text="{Binding MainVM.Timestamp, StringFormat='{}{1:HH}', FallbackValue='--'}" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:HH}', TargetNullValue='--'}" TextAlignment="Center"/>
                     <TextBlock Grid.Column="2" Text=":"/>
-                    <TextBlock Grid.Column="3" Text="{Binding MainVM.Timestamp, StringFormat='{}{1:mm}', FallbackValue='--'}" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:mm}', TargetNullValue='--'}" TextAlignment="Center"/>
                     <TextBlock Grid.Column="4" Text=":"/>
-                    <TextBlock Grid.Column="5" Text="{Binding MainVM.Timestamp, StringFormat='{}{1:ss}', FallbackValue='--'}" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="5" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:ss}', TargetNullValue='--'}" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="6" Text="{Binding MainVM.Timestamp, StringFormat='{} {0:zzz}', TargetNullValue=''}"/>
                 </Grid>
             </Grid>
         </StackPanel>

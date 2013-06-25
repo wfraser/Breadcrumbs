@@ -198,14 +198,14 @@ namespace DashMap.ViewModels
             }
         }
 
-        public DateTime? Timestamp
+        public DateTimeOffset? Timestamp
         {
             get
             {
                 if (m_currentPosition == null)
                     return null;
 
-                return m_currentPosition.Timestamp.UtcDateTime;
+                return m_currentPosition.Timestamp;
             }
         }
 
@@ -224,6 +224,7 @@ namespace DashMap.ViewModels
                 NotifyPropertyChanged("Heading");
                 NotifyPropertyChanged("Accuracy");
                 NotifyPropertyChanged("Source");
+                NotifyPropertyChanged("Timestamp");
             }
         }
 
