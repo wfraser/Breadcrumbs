@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Phone.Shell;
 using Windows.Devices.Geolocation;
 
 namespace DashMap
@@ -22,6 +23,9 @@ namespace DashMap
             m_geolocator.StatusChanged += Geolocator_StatusChanged;
             m_geolocator.PositionChanged += Geolocator_PositionChanged;
 
+            // Disable the lock screen.
+            PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
+
             m_mainVM.IsGpsEnabled = true;
         }
 
@@ -30,6 +34,9 @@ namespace DashMap
             m_geolocator.StatusChanged -= Geolocator_StatusChanged;
             m_geolocator.PositionChanged -= Geolocator_PositionChanged;
             m_geolocator = null;
+
+            // Re-enable the lock screen.
+            PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Enabled;
 
             m_mainVM.IsGpsEnabled = false;
         }
