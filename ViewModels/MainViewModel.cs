@@ -124,12 +124,13 @@ namespace DashMap.ViewModels
                 if (double.IsNaN(spd.Value))
                     spd = 0.0;
 
+                // Speed comes in as meters per second
                 switch (m_units)
                 {
                     case UnitMode.Metric:
-                        return Math.Floor(spd.Value).ToString() + " km/h";
+                        return Math.Floor(spd.Value * 3.6).ToString() + " km/h";
                     case UnitMode.Imperial:
-                        return Math.Floor(spd.Value * 0.621371).ToString() + " MPH";
+                        return Math.Floor(spd.Value * 2.237).ToString() + " MPH";
                 }
                 return "error";
                 //return "88 MPH";
@@ -194,6 +195,17 @@ namespace DashMap.ViewModels
                         return "WiFi";
                 }
                 return "error";
+            }
+        }
+
+        public DateTime? Timestamp
+        {
+            get
+            {
+                if (m_currentPosition == null)
+                    return null;
+
+                return m_currentPosition.Timestamp.UtcDateTime;
             }
         }
 

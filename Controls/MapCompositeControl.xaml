@@ -11,17 +11,9 @@
     Loaded="OnLoaded"
     d:DesignHeight="480" d:DesignWidth="800">
 
-    <Grid x:Name="LayoutRoot" Background="Transparent"
+    <Grid x:Name="LayoutRoot"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
         
         <!--
         <StackPanel Margin="12,17,0,0">
@@ -53,12 +45,51 @@
                                  StrokeThickness="5"/>
             </maps:Map.MapElements>
         </maps:Map>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <Border Background="#80000000"><!-- Black, 50% opacity -->
-            <TextBlock x:Name="OverlayText"
+            <Border Background="#80000000">
+                <!-- Black, 50% opacity -->
+                <TextBlock x:Name="OverlayText"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Text="{Binding OverlayText}"/>
-        </Border>
+            </Border>
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button x:Name="ZoomInButton"
+                    Grid.Column="1"
+                    Content="+"
+                    FontWeight="Bold"
+                    Padding="8,-2,7,3"
+                    Background="Black"
+                    Click="ZoomInButton_Click"/>
+            <Button x:Name="ZoomOutButton"
+                    Grid.Column="1" Grid.Row="1"
+                    Content="&#x2012;"
+                    FontWeight="Bold"
+                    Padding="8,-2,7,3"
+                    Background="Black"
+                    Click="ZoomOutButton_Click"/>
+        </Grid>
     </Grid>
 </UserControl>

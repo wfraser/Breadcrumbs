@@ -43,13 +43,14 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/><!-- 0 -->
+                    <RowDefinition Height="Auto"/><!-- 1 -->
+                    <RowDefinition Height="Auto"/><!-- 2 -->
+                    <RowDefinition Height="Auto"/><!-- 3 -->
+                    <RowDefinition Height="Auto"/><!-- 4 -->
+                    <RowDefinition Height="Auto"/><!-- 5 -->
+                    <RowDefinition Height="Auto"/><!-- 6 -->
+                    <RowDefinition Height="Auto"/><!-- 7 -->
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Lat: " HorizontalAlignment="Right"/>
@@ -67,6 +68,23 @@
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MainVM.Heading}"/>
                 <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MainVM.Accuracy}"/>
                 <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding MainVM.Source}"/>
+                
+                <Grid Grid.Row="7" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="1" Text="{Binding MainVM.Timestamp, StringFormat='{}{1:HH}', FallbackValue='--'}" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text=":"/>
+                    <TextBlock Grid.Column="3" Text="{Binding MainVM.Timestamp, StringFormat='{}{1:mm}', FallbackValue='--'}" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="4" Text=":"/>
+                    <TextBlock Grid.Column="5" Text="{Binding MainVM.Timestamp, StringFormat='{}{1:ss}', FallbackValue='--'}" TextAlignment="Center"/>
+                </Grid>
             </Grid>
         </StackPanel>
         

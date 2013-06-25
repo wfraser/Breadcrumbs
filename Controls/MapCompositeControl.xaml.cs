@@ -16,6 +16,9 @@ namespace DashMap
 {
     public partial class MapCompositeControl : UserControl
     {
+        const double MinZoomLevel = 1.0;
+        const double MaxZoomLevel = 20.0;
+
         public MapCompositeControl()
         {
             InitializeComponent();
@@ -80,6 +83,34 @@ namespace DashMap
         private void MapControl_ViewChanged(object sender, MapViewChangedEventArgs e)
         {
 
+        }
+
+        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
+        {
+            double zoom = MapControl.ZoomLevel;
+            zoom += 1.0;
+            zoom = Math.Min(Math.Max(zoom, MinZoomLevel), MaxZoomLevel);
+            MapControl.ZoomLevel = zoom;
+
+            ZoomOutButton.IsEnabled = true;
+            if (zoom == MaxZoomLevel)
+            {
+                ZoomInButton.IsEnabled = false;
+            }
+        }
+
+        private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            double zoom = MapControl.ZoomLevel;
+            zoom -= 1.0;
+            zoom = Math.Min(Math.Max(zoom, MinZoomLevel), MaxZoomLevel);
+            MapControl.ZoomLevel = zoom;
+
+            ZoomInButton.IsEnabled = true;
+            if (zoom == MinZoomLevel)
+            {
+                ZoomOutButton.IsEnabled = false;
+            }
         }
 
         private void MapControl_Loaded(object sender, RoutedEventArgs e)
