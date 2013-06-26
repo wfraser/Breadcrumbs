@@ -23,6 +23,7 @@ namespace DashMap
         {
             InitializeComponent();
             m_mapLoaded = false;
+            m_centerChangedByCode = false;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -64,6 +65,7 @@ namespace DashMap
             switch (e.PropertyName)
             {
                 case "CurrentGeoCoordinate":
+                    m_centerChangedByCode = true;
                     GeoCoordinate center = m_viewModel.MainVM.CurrentGeoCoordinate;
                     CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
 
@@ -75,14 +77,30 @@ namespace DashMap
             }
         }
 
-        private void MapControl_ViewChanging(object sender, MapViewChangingEventArgs e)
+        private void MapControl_CenterChanged(object sender, MapCenterChangedEventArgs e)
         {
+            if (m_centerChangedByCode)
+            {
+                // You'd expect that the ViewChanging and ViewChanged events would be fired from the Map
+                // control when the user pans the view, but you'd be wrong, they only get fired from
+                // calls to Map.SetView(), so they are totally worthless.
+                //
+                // ManipulationStarted/Delta/Completed events don't seem to get fired at all, ever.
+                //
+                // Instead, we have to handle CenterChanged, which gets fired when the user pans, or when
+                // code changes the Center property. To differentiate between the two cases, we maintain
+                // m_centerChangedByCode.
+                //
+                // This API is bad, and Nokia should feel bad.
+                // Source: http://social.msdn.microsoft.com/Forums/wpapps/en-US/4e5398de-ec50-46df-84d5-087dcaa20924/wp8-map-viewchanged-and-viewchanging-events-extents
 
-        }
-
-        private void MapControl_ViewChanged(object sender, MapViewChangedEventArgs e)
-        {
-
+                m_centerChangedByCode = false;
+            }
+            else
+            {
+                // Center changed by the user.
+                m_viewModel.CenterOnCurrentPosition = false;
+            }
         }
 
         private void ZoomInButton_Click(object sender, RoutedEventArgs e)
@@ -113,16 +131,33 @@ namespace DashMap
             }
         }
 
+        private void RecenterButton_Click(object sender, RoutedEventArgs e)
+        {
+            m_centerChangedByCode = true;
+            MapControl.Center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
+            m_viewModel.CenterOnCurrentPosition = true;
+        }
+
         private void MapControl_Loaded(object sender, RoutedEventArgs e)
         {
             m_mapLoaded = true;
             if (m_viewModel != null)
+            {
                 m_viewModel.OverlayText = string.Empty;
+            }
+
+            // MapPolyline and MapPolygon don't inherit from UIElement, so specifying x:Name
+            // on them does nothing (other than creating the empty variables). We need to manually
+            // look them up at load time.
 
             Track = MapControl.MapElements[0] as MapPolyline;
             CurrentPositionCircle = MapControl.MapElements[1] as MapPolygon;
+
+            System.Diagnostics.Debug.Assert(Track != null);
+            System.Diagnostics.Debug.Assert(CurrentPositionCircle != null);
         }
 
+        bool m_centerChangedByCode;
         bool m_mapLoaded;
         private ViewModels.MapCompositeViewModel m_viewModel;
     }

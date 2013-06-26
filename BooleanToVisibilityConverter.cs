@@ -9,7 +9,14 @@ namespace DashMap
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((value as bool?) == true) ? Visibility.Visible : Visibility.Collapsed;
+            bool valueBool = (value as bool?) ?? false;
+
+            if (string.Equals("invert", parameter))
+            {
+                valueBool = !valueBool;
+            }
+
+            return (valueBool ? Visibility.Visible : Visibility.Collapsed);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

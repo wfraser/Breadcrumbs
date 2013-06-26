@@ -31,8 +31,8 @@
                   Grid.ColumnSpan="2" Grid.RowSpan="2"
                   CartographicMode="{Binding MapType, Mode=TwoWay}"
                   Center="{Binding MainVM.CurrentGeoCoordinate, Mode=TwoWay}"
-                  ViewChanging="MapControl_ViewChanging"
-                  ViewChanged="MapControl_ViewChanged" Background="{StaticResource PhoneBackgroundBrush}"
+                  CenterChanged="MapControl_CenterChanged"
+                  Background="{StaticResource PhoneBackgroundBrush}"
                   Loaded="MapControl_Loaded">
             <maps:Map.MapElements>
                 <maps:MapPolyline x:Name="Track"
@@ -73,23 +73,36 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <Button x:Name="ZoomInButton"
                     Grid.Column="1"
+                    FontFamily="Consolas"
                     Content="+"
                     FontWeight="Bold"
-                    Padding="8,-2,7,3"
+                    Width="70" Height="70"
                     Background="Black"
                     Click="ZoomInButton_Click"/>
             <Button x:Name="ZoomOutButton"
                     Grid.Column="1" Grid.Row="1"
-                    Content="&#x2012;"
+                    FontFamily="Consolas"
+                    Content="-"
                     FontWeight="Bold"
-                    Padding="8,-2,7,3"
+                    Width="70" Height="70"
                     Background="Black"
                     Click="ZoomOutButton_Click"/>
+            
+            <Button x:Name="RecenterButton"
+                    Grid.Column="1" Grid.Row="2"
+                    FontFamily="Consolas"
+                    Content="o"
+                    FontWeight="Bold"
+                    Width="70" Height="70"
+                    Background="Black"
+                    Visibility="{Binding CenterOnCurrentPosition, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                    Click="RecenterButton_Click"/>
         </Grid>
     </Grid>
 </UserControl>

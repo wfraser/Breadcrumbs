@@ -35,10 +35,21 @@ namespace DashMap.ViewModels
             }
         }
 
+        public bool CenterOnCurrentPosition
+        {
+            get { return m_centerOnCurrentPosition; }
+            set
+            {
+                m_centerOnCurrentPosition = value;
+                NotifyPropertyChanged("CenterOnCurrentPosition");
+            }
+        }
+
         public MapCompositeViewModel(MainViewModel mainVM)
         {
             m_mainVM = mainVM;
             m_overlayText = "Loading...";
+            m_centerOnCurrentPosition = true;
         }
 
         public async Task<Geoposition> GetCurrentLocation()
@@ -85,5 +96,6 @@ namespace DashMap.ViewModels
         private MainViewModel m_mainVM;
         private string m_overlayText;
         private MapCartographicMode m_mapType;
+        private bool m_centerOnCurrentPosition;
     }
 }
