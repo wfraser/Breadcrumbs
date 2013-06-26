@@ -52,7 +52,7 @@ namespace DashMap.ViewModels
             m_centerOnCurrentPosition = true;
         }
 
-        public async Task<Geoposition> GetCurrentLocation()
+        public async Task<GeocoordinateEx> GetCurrentLocation()
         {
             if (true != (bool)System.IO.IsolatedStorage.IsolatedStorageSettings.ApplicationSettings["LocationConsent"])
             {
@@ -70,9 +70,7 @@ namespace DashMap.ViewModels
                     maximumAge: TimeSpan.FromMinutes(5),
                     timeout: TimeSpan.FromSeconds(10));
 
-                m_mainVM.CurrentPosition = position.Coordinate;
-
-                return position;
+                return new GeocoordinateEx(position.Coordinate);
             }
             catch (Exception ex)
             {

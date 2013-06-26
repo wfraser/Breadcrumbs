@@ -38,14 +38,14 @@ namespace DashMap
 
             m_viewModel.GetCurrentLocation().ContinueWith(x =>
             {
-                Windows.Devices.Geolocation.Geoposition location = x.Result;
-                if (location == null)
+                GeocoordinateEx coordinate = x.Result;
+                if (coordinate == null)
                 {
                     // Leave it at its default. (or set to (47.622344,-122.325865)?)
                 }
                 else
                 {
-                    m_viewModel.MainVM.CurrentPosition = location.Coordinate;
+                    m_viewModel.MainVM.CurrentPosition = coordinate;
                     MapControl.Dispatcher.BeginInvoke(() =>
                         {
                             MapControl.ZoomLevel = 15;
@@ -65,13 +65,18 @@ namespace DashMap
             switch (e.PropertyName)
             {
                 case "CurrentGeoCoordinate":
-                    m_centerChangedByCode = true;
                     GeoCoordinate center = m_viewModel.MainVM.CurrentGeoCoordinate;
                     CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
 
                     if (m_viewModel.MainVM.IsTrackingEnabled)
                     {
                         Track.Path.Add(center);
+                    }
+
+                    if (m_viewModel.CenterOnCurrentPosition)
+                    {
+                        m_centerChangedByCode = true;
+                        MapControl.Center = center;
                     }
                     break;
             }

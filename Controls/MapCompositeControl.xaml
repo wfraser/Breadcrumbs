@@ -30,7 +30,6 @@
                   VerticalAlignment="Stretch"
                   Grid.ColumnSpan="2" Grid.RowSpan="2"
                   CartographicMode="{Binding MapType, Mode=TwoWay}"
-                  Center="{Binding MainVM.CurrentGeoCoordinate, Mode=TwoWay}"
                   CenterChanged="MapControl_CenterChanged"
                   Background="{StaticResource PhoneBackgroundBrush}"
                   Loaded="MapControl_Loaded">

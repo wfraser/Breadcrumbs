@@ -32,6 +32,18 @@ namespace DashMap
                 coord.Heading ?? double.NaN);
         }
 
+        public static GeoCoordinate ConvertGeocoordinate(GeocoordinateEx coord)
+        {
+            return new GeoCoordinate(
+                coord.Latitude,
+                coord.Longitude,
+                coord.Altitude ?? double.NaN,
+                coord.Accuracy,
+                coord.AltitudeAccuracy ?? double.NaN,
+                coord.Speed ?? double.NaN,
+                coord.Heading ?? double.NaN);
+        }
+
         public static double ToRadians(double degrees)
         {
             return degrees * (Math.PI / 180.0);

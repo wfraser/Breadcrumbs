@@ -209,7 +209,7 @@ namespace DashMap.ViewModels
             }
         }
 
-        public Geocoordinate CurrentPosition
+        public GeocoordinateEx CurrentPosition
         {
             get { return m_currentPosition; }
             set
@@ -249,16 +249,6 @@ namespace DashMap.ViewModels
                 {
                     return Utils.ConvertGeocoordinate(m_currentPosition);
                 }
-            }
-
-            set
-            {
-                // ignored
-                // We need this because the binding from CurrentGeoCoordinate to Map.Center
-                // has to be TwoWay in order for it to work more than once. XAML WTF.
-                // The canonical form of the current position is of type
-                // Windows.Devices.Geolocation.Geoposition, which cannot be constructed or
-                // modified.
             }
         }
 
@@ -327,6 +317,6 @@ namespace DashMap.ViewModels
         private GPS m_gps;
         private MapCompositeViewModel m_mapViewModel;
         private MapSidebarViewModel m_sidebarViewModel;
-        private Geocoordinate m_currentPosition;
+        private GeocoordinateEx m_currentPosition;
     }
 }

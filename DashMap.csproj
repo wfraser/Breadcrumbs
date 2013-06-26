@@ -99,6 +99,7 @@
     </Compile>
     <Compile Include="DebugValueConverter.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="GeocoordinateEx.cs" />
     <Compile Include="GPS.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="MainPage.xaml.cs">
