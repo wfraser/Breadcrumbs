@@ -13,7 +13,7 @@ namespace DashMap
             double seconds = (minutes - Math.Floor(minutes)) * 60.0;
             double tenths = (seconds - Math.Floor(seconds)) * 10.0;
             return string.Format(
-                "{0}°{1}'{2}.{3}\"",
+                "{0}° {1}' {2}.{3}\"",
                 Math.Floor(degrees),
                 Math.Floor(minutes),
                 Math.Floor(seconds),
