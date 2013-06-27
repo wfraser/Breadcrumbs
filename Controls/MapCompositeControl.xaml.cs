@@ -57,6 +57,7 @@ namespace DashMap
         void MainVM_TrackCleared()
         {
             Track.Path.Clear();
+            MapControl.MapElements[0] = Track; // This is to get the map to refresh.
         }
 
         void MainVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -65,7 +66,7 @@ namespace DashMap
             switch (e.PropertyName)
             {
                 case "CurrentGeoCoordinate":
-                    GeoCoordinate center = m_viewModel.MainVM.CurrentGeoCoordinate;
+                    GeoCoordinate center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
                     CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
 
                     if (m_viewModel.MainVM.IsTrackingEnabled)

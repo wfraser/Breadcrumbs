@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Device.Location;
+using System.Threading;
 using Microsoft.Phone.Maps.Controls;
 using Windows.Devices.Geolocation;
 using DashMap;
@@ -211,7 +212,12 @@ namespace DashMap.ViewModels
 
         public GeocoordinateEx CurrentPosition
         {
-            get { return m_currentPosition; }
+            get
+            {
+                m_locationRead.Set();
+                return m_currentPosition;
+            }
+
             set
             {
                 m_currentPosition = value;
@@ -228,28 +234,9 @@ namespace DashMap.ViewModels
             }
         }
 
-        public GeoCoordinate CurrentGeoCoordinate
+        internal ManualResetEvent LocationReadEvent
         {
-            get
-            {
-                if (m_currentPosition == null)
-                {
-                    // This is the Map default
-                    return new GeoCoordinate(
-                        latitude: 0.0,          // Centered on equator
-                        longitude: -88.86777,   // between North and South America
-                        altitude: double.NaN,
-                        horizontalAccuracy: double.NaN,
-                        verticalAccuracy: double.NaN,
-                        speed: double.NaN,
-                        course: double.NaN
-                        );
-                }
-                else
-                {
-                    return Utils.ConvertGeocoordinate(m_currentPosition);
-                }
-            }
+            get { return m_locationRead; }
         }
 
         public MainViewModel()
@@ -260,6 +247,8 @@ namespace DashMap.ViewModels
             m_gps = new GPS(this);
             m_units = UnitMode.Imperial;
             m_coordMode = CoordinateMode.DMS;
+
+            m_locationRead = new ManualResetEvent(false);
         }
 
         public void ToggleGps()
@@ -318,5 +307,9 @@ namespace DashMap.ViewModels
         private MapCompositeViewModel m_mapViewModel;
         private MapSidebarViewModel m_sidebarViewModel;
         private GeocoordinateEx m_currentPosition;
+
+        // For testing
+        private ManualResetEvent m_locationRead;
+
     }
 }
