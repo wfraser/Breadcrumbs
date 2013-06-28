@@ -33,15 +33,15 @@ namespace DashMap
         }
 
         [XmlElement("trk")]
-        public List<GpxTrack> Tracks
+        public List<Track> Tracks
         {
             get { return m_tracks; }
         }
-        private List<GpxTrack> m_tracks;
+        private List<Track> m_tracks;
 
         public GPX()
         {
-            m_tracks = new List<GpxTrack>();
+            m_tracks = new List<Track>();
             Version = "1.1";
             Creator = "DashMap/" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         }
@@ -64,78 +64,82 @@ namespace DashMap
             var gpx = (GPX)serializer.Deserialize(stream);
             return gpx;
         }
-    }
 
-    public class GpxTrack
-    {
-        [XmlElement("trkseg")]
-        public List<GpxTrackSegment> Segments
-        {
-            get { return m_segments; }
-        }
-        private List<GpxTrackSegment> m_segments;
+        #region Inner GPX Classes
 
-        public GpxTrack()
+        public class Track
         {
-            m_segments = new List<GpxTrackSegment>();
-        }
-    }
+            [XmlElement("trkseg")]
+            public List<TrackSegment> Segments
+            {
+                get { return m_segments; }
+            }
+            private List<TrackSegment> m_segments;
 
-    public class GpxTrackSegment
-    {
-        [XmlElement("trkpt")]
-        public List<GpxTrackPoint> Points
-        {
-            get { return m_points; }
-        }
-        private List<GpxTrackPoint> m_points;
-
-        public GpxTrackSegment()
-        {
-            m_points = new List<GpxTrackPoint>();
-        }
-    }
-
-    public class GpxTrackPoint
-    {
-        [XmlAttribute("lat")]
-        public double Latitude
-        {
-            get;
-            set;
+            public Track()
+            {
+                m_segments = new List<TrackSegment>();
+            }
         }
 
-        [XmlAttribute("lon")]
-        public double Longitude
+        public class TrackSegment
         {
-            get;
-            set;
+            [XmlElement("trkpt")]
+            public List<TrackPoint> Points
+            {
+                get { return m_points; }
+            }
+            private List<TrackPoint> m_points;
+
+            public TrackSegment()
+            {
+                m_points = new List<TrackPoint>();
+            }
         }
 
-        [XmlElement("ele")]
-        public double Altitude
+        public class TrackPoint
         {
-            get;
-            set;
+            [XmlAttribute("lat")]
+            public double Latitude
+            {
+                get;
+                set;
+            }
+
+            [XmlAttribute("lon")]
+            public double Longitude
+            {
+                get;
+                set;
+            }
+
+            [XmlElement("ele")]
+            public double Altitude
+            {
+                get;
+                set;
+            }
+
+            [XmlElement("time")]
+            public string DateTimeStr
+            {
+                // ISO 8601 date/time format: "2013-06-28T04:31:25.1234567Z"
+                get { return DateTime.ToUniversalTime().ToString("o"); }
+                set { DateTime = DateTime.Parse(value, null, DateTimeStyles.RoundtripKind); }
+            }
+
+            [XmlIgnore]
+            public DateTime DateTime
+            {
+                get;
+                set;
+            }
+
+            public TrackPoint()
+            {
+            }
         }
 
-        [XmlElement("time")]
-        public string DateTimeStr
-        {
-            // ISO 8601 date/time format: "2013-06-28T04:31:25.1234567Z"
-            get { return DateTime.ToUniversalTime().ToString("o"); }
-            set { DateTime = DateTime.Parse(value, null, DateTimeStyles.RoundtripKind); }
-        }
-
-        [XmlIgnore]
-        public DateTime DateTime
-        {
-            get;
-            set;
-        }
-
-        public GpxTrackPoint()
-        {
-        }
+        #endregion Inner GPX Classes
     }
 }
