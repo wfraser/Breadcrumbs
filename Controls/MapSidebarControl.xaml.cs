@@ -81,6 +81,34 @@ namespace DashMap
             }
         }
 
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            var thread = new System.Threading.Thread(
+                new System.Threading.ThreadStart(
+                    () =>
+                    {
+                        //
+                        // Awesome demo code
+                        //
+                        var gpx = GPX.Deserialize(Application.GetResourceStream(new Uri("Assets/Test/rainier.gpx", UriKind.Relative)).Stream);
+                        foreach (var seg in gpx.Tracks[0].Segments)
+                        {
+                            foreach (var point in seg.Points)
+                            {
+                                var coord = new GeocoordinateEx(
+                                    point.Latitude, point.Longitude, point.Altitude);
+                                coord.Timestamp = point.DateTime;
+                                coord.PositionSource = Windows.Devices.Geolocation.PositionSource.Satellite;
+
+                                m_viewModel.MainVM.LocationReadEvent.Reset();
+                                m_viewModel.MainVM.CurrentPosition = coord;
+                                m_viewModel.MainVM.LocationReadEvent.WaitOne();
+                            }
+                        }
+                    }));
+            thread.Start();
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             m_viewModel = (ViewModels.MapSidebarViewModel)DataContext;

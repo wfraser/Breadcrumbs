@@ -103,6 +103,10 @@
                 <Button x:Name="ClearButton"
                     Content="Clear Track"
                     Click="ClearButton_Click"/>
+                
+                <Button x:Name="TestButton"
+                        Content="Test"
+                        Click="TestButton_Click"/>
             </StackPanel>
         </Border>
     </Grid>
