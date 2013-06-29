@@ -147,6 +147,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\DashMap_AppIcon.png" />
     <Content Include="Assets\Test\rainier.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -156,28 +157,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\ApplicationIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\Icons\back.png" />
     <Content Include="Assets\Icons\next.png" />
     <Content Include="Assets\Icons\transport.pause.png" />
     <Content Include="Assets\Icons\transport.play.png" />
-    <Content Include="Assets\Tiles\FlipCycleTileLarge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileMedium.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileSmall.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\IconicTileMediumLarge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\IconicTileSmall.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Assets\Tiles\DashMap_MediumTile.png" />
+    <Content Include="Assets\Tiles\DashMap_SmallTile.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\AppResources.resx">

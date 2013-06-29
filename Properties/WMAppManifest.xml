@@ -5,7 +5,7 @@
     <Language code="en-US" />
   </Languages>
   <App xmlns="" ProductID="{bcc05806-4a4f-4716-a66c-a4d5a62a9661}" Title="DashMap" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="William R. Fraser" Description="A GPS map designed for real-time tracking on your car's dashboard." Publisher="Codewise.org" PublisherID="{a11c718e-575b-4694-b175-4dfb22f26d3c}">
-    <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
+    <IconPath IsRelative="true" IsResource="false">Assets\DashMap_AppIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
       <Capability Name="ID_CAP_SENSORS" />
@@ -18,20 +18,19 @@
     <Tokens>
       <PrimaryToken TokenID="DashMapToken" TaskName="_default">
         <TemplateFlip>
-          <SmallImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileSmall.png</SmallImageURI>
+          <SmallImageURI IsRelative="true" IsResource="false">Assets\Tiles\DashMap_SmallTile.png</SmallImageURI>
           <Count>0</Count>
-          <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileMedium.png</BackgroundImageURI>
-          <Title>Dash Map</Title>
+          <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\DashMap_MediumTile.png</BackgroundImageURI>
+          <Title>DashMap</Title>
           <BackContent>
           </BackContent>
-          <BackBackgroundImageURI>
+          <BackBackgroundImageURI IsRelative="true" IsResource="false">
           </BackBackgroundImageURI>
           <BackTitle>
           </BackTitle>
-          <DeviceLockImageURI>
+          <DeviceLockImageURI IsRelative="true" IsResource="false">
           </DeviceLockImageURI>
-          <HasLarge>
-          </HasLarge>
+          <HasLarge>false</HasLarge>
         </TemplateFlip>
       </PrimaryToken>
     </Tokens>
