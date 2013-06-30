@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Device.Location;
+using System.IO;
 using System.Threading;
 using Microsoft.Phone.Maps.Controls;
 using Windows.Devices.Geolocation;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using DashMap;
 using DashMap.Resources;
 
@@ -26,6 +30,11 @@ namespace DashMap.ViewModels
             get { return m_gps; }
         }
 
+        public GPX GPX
+        {
+            get { return m_gpx; }
+        }
+
         public bool IsGpsEnabled
         {
             get { return m_isGpsEnabled; }
@@ -41,8 +50,21 @@ namespace DashMap.ViewModels
             get { return m_isTrackingEnabled; }
             set
             {
-                m_isTrackingEnabled = value;
-                NotifyPropertyChanged("IsTrackingEnabled");
+                if (value != m_isTrackingEnabled)
+                {
+                    m_isTrackingEnabled = value;
+
+                    if (m_isTrackingEnabled)
+                    {
+                        // Tracking turned on after being off.
+                        // Make a new track segment.
+
+                        m_gpx.NewTrackSegment();
+                        // TODO: make new visual track segment here too
+                    }
+
+                    NotifyPropertyChanged("IsTrackingEnabled");
+                }
             }
         }
 
@@ -221,6 +243,12 @@ namespace DashMap.ViewModels
             set
             {
                 m_currentPosition = value;
+
+                if (m_isTrackingEnabled)
+                {
+                    m_gpx.AddTrackPoint(m_currentPosition);
+                }
+
                 NotifyPropertyChanged("CurrentPosition");
                 NotifyPropertyChanged("CurrentGeoCoordinate");
                 NotifyPropertyChanged("Latitude");
@@ -245,6 +273,7 @@ namespace DashMap.ViewModels
             m_sidebarViewModel = new MapSidebarViewModel(this);
             m_isGpsEnabled = false;
             m_gps = new GPS(this);
+            m_gpx = new GPX();
             m_units = UnitMode.Imperial;
             m_coordMode = CoordinateMode.DMS;
 
@@ -299,11 +328,41 @@ namespace DashMap.ViewModels
             m_mapViewModel.MapType = mapType;
         }
 
+        public async void SaveTrack()
+        {
+            StorageFolder local = ApplicationData.Current.LocalFolder;
+
+            StorageFolder gpxFolder = null;
+            try
+            {
+                gpxFolder = await local.GetFolderAsync("GPX");
+            }
+            catch (FileNotFoundException)
+            {
+                // do nothing
+            }
+
+            if (gpxFolder == null)
+            {
+                gpxFolder = await local.CreateFolderAsync("GPX");
+            }
+
+            var filename = DateTime.Now.ToString("o") + ".gpx";
+            filename = "test.gpx";
+            var file = await gpxFolder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
+
+            using (var stream = await file.OpenStreamForWriteAsync())
+            {
+                m_gpx.Serialize(stream);
+            }
+        }
+
         private UnitMode m_units;
         private CoordinateMode m_coordMode;
         private bool m_isGpsEnabled;
         private bool m_isTrackingEnabled;
         private GPS m_gps;
+        private GPX m_gpx;
         private MapCompositeViewModel m_mapViewModel;
         private MapSidebarViewModel m_sidebarViewModel;
         private GeocoordinateEx m_currentPosition;

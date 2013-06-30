@@ -81,6 +81,11 @@ namespace DashMap
             }
         }
 
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            m_viewModel.MainVM.SaveTrack();
+        }
+
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             var thread = new System.Threading.Thread(

@@ -50,6 +50,8 @@ namespace DashMap
         {
             switch (args.Status)
             {
+                //TODO: use this to create new track segments when GPS fix is lost.
+
                 case PositionStatus.Disabled:
                 case PositionStatus.Initializing:
                 case PositionStatus.NoData:

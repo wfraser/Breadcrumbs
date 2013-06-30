@@ -48,6 +48,12 @@ namespace DashMap
 
         public void Serialize(Stream stream)
         {
+            // First, clean out any empty track segments.
+            foreach (var track in m_tracks)
+            {
+                track.Segments.RemoveAll(seg => seg.Points.Count == 0);
+            }
+
             var settings = new XmlWriterSettings();
             settings.Indent = true;
 
@@ -63,6 +69,34 @@ namespace DashMap
             var serializer = new XmlSerializer(typeof(GPX), Namespace);
             var gpx = (GPX)serializer.Deserialize(stream);
             return gpx;
+        }
+
+        public void NewTrackSegment()
+        {
+            if (m_tracks.Count == 0)
+            {
+                m_tracks.Add(new Track());
+            }
+
+            m_tracks[0].Segments.Add(new TrackSegment());
+        }
+
+        public void AddTrackPoint(GeocoordinateEx coordinate)
+        {
+            if (m_tracks.Count == 0)
+            {
+                NewTrackSegment();
+            }
+
+            var point = new TrackPoint()
+            {
+                Latitude = coordinate.Latitude,
+                Longitude = coordinate.Longitude,
+                Altitude = coordinate.Altitude,
+                DateTime = coordinate.Timestamp.DateTime,
+            };
+
+            m_tracks[0].Segments[m_tracks[0].Segments.Count - 1].Points.Add(point);
         }
 
         #region Inner GPX Classes
@@ -114,10 +148,17 @@ namespace DashMap
             }
 
             [XmlElement("ele")]
-            public double Altitude
+            public double? Altitude
             {
                 get;
                 set;
+            }
+
+            [XmlIgnore]
+            public bool AltitudeSpecified
+            {
+                // This tells the XML Serializer to not write Altitude if it's null.
+                get { return Altitude.HasValue; }
             }
 
             [XmlElement("time")]
