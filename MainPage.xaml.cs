@@ -43,6 +43,15 @@ namespace DashMap
 
                 IsolatedStorageSettings.ApplicationSettings.Save();
             }
+
+            UriMapper uriMapper = (UriMapper)App.RootFrame.UriMapper;
+            if (uriMapper.IncomingFileName != null)
+            {
+                MessageBox.Show(
+                    "Sorry, support for loading GPX files isn't finished yet.",
+                    "DashMap GPX Import",
+                    MessageBoxButton.OK);
+            }
         }
 
         private void PhoneApplicationPage_OrientationChanged(object sender, OrientationChangedEventArgs e)

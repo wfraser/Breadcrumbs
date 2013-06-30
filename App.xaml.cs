@@ -138,6 +138,9 @@ namespace DashMap
             RootFrame = new PhoneApplicationFrame();
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
+            // Our custom URI mapper for handling file types.
+            RootFrame.UriMapper = new UriMapper();
+
             // Handle navigation failures
             RootFrame.NavigationFailed += RootFrame_NavigationFailed;
 

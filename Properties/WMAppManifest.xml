@@ -34,6 +34,17 @@
         </TemplateFlip>
       </PrimaryToken>
     </Tokens>
+    <!-- Add this back in when GPX import is implemented.
+    <Extensions>
+      <FileTypeAssociation Name="GPX File" NavUriFragment="fileToken=%s" TaskID="_default">
+        <DisplayName>GPX File</DisplayName>
+        <SupportedFileTypes>
+          <FileType ContentType="text/xml">.gpx</FileType>
+          <FileType ContentType="text/plain">.gpx</FileType>
+        </SupportedFileTypes>
+      </FileTypeAssociation>
+    </Extensions>
+    -->
     <ScreenResolutions>
       <ScreenResolution Name="ID_RESOLUTION_WVGA" />
       <ScreenResolution Name="ID_RESOLUTION_WXGA" />
