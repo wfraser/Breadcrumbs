@@ -14,7 +14,8 @@
     SupportedOrientations="Landscape" Orientation="Landscape"
     OrientationChanged="PhoneApplicationPage_OrientationChanged"
     shell:SystemTray.IsVisible="False"
-    shell:SystemTray.Opacity="0.2">
+    shell:SystemTray.Opacity="0.2"
+    x:Name="MainPageRoot">
 
     <!-- Can't use the ApplicationBar because it sucks in landscape
     <phone:PhoneApplicationPage.ApplicationBar>
@@ -49,6 +50,13 @@
                                  IsGpsEnabled="{Binding MainVM.IsGpsEnabled}"
                                  IsTrackingEnabled="{Binding MainVM.IsTrackingEnabled}"
                                  DataContext="{Binding SidebarViewModel}"/>
+
+        <!-- Visibility is set in code to prevent initial visible flash. -->
+        <!-- used to be: Visibility="{Binding DataContext.IsFileBrowserVisible, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" -->
+        <local:FileBrowser x:Name="FileBrowser"
+                           Grid.ColumnSpan="3"
+                           Visibility="Collapsed"
+                           DataContext="{Binding FileBrowserViewModel}"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

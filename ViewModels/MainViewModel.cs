@@ -25,6 +25,11 @@ namespace DashMap.ViewModels
             get { return m_sidebarViewModel; }
         }
 
+        public FileBrowserViewModel FileBrowserViewModel
+        {
+            get { return m_fileBrowserViewModel; }
+        }
+
         public GPS GPS
         {
             get { return m_gps; }
@@ -64,6 +69,19 @@ namespace DashMap.ViewModels
                     }
 
                     NotifyPropertyChanged("IsTrackingEnabled");
+                }
+            }
+        }
+
+        public bool IsFileBrowserVisible
+        {
+            get { return m_isFileBrowserVisible; }
+            set
+            {
+                if (value != m_isFileBrowserVisible)
+                {
+                    m_isFileBrowserVisible = value;
+                    NotifyPropertyChanged("IsFileBrowserVisible");
                 }
             }
         }
@@ -272,6 +290,7 @@ namespace DashMap.ViewModels
             m_mapViewModel = new MapCompositeViewModel(this);
             m_sidebarViewModel = new MapSidebarViewModel(this);
             m_isGpsEnabled = false;
+            m_isFileBrowserVisible = false;
             m_gps = new GPS(this);
             m_gpx = new GPX();
             m_units = UnitMode.Imperial;
@@ -347,24 +366,46 @@ namespace DashMap.ViewModels
                 gpxFolder = await local.CreateFolderAsync("GPX");
             }
 
-            var filename = DateTime.Now.ToString("o") + ".gpx";
-            filename = "test.gpx";
-            var file = await gpxFolder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
-
-            using (var stream = await file.OpenStreamForWriteAsync())
-            {
-                m_gpx.Serialize(stream);
-            }
+            m_fileBrowserViewModel = new FileBrowserViewModel(
+                this,
+                gpxFolder,
+                ViewModels.FileBrowserMode.Save,
+                new Action<IStorageFile>(result =>
+                {
+                    if (result != null)
+                    {
+                        result.OpenStreamForWriteAsync()
+                            .ContinueWith(prevTask =>
+                            {
+                                try
+                                {
+                                    using (Stream stream = prevTask.Result)
+                                    {
+                                        m_gpx.Serialize(stream);
+                                    }
+                                }
+                                catch (AggregateException ex)
+                                {
+                                    Utils.ShowError(ex, "Error saving GPX");
+                                }
+                            });
+                    }
+                    // else: save was cancelled or an error occured upstream
+                }));
+            NotifyPropertyChanged("FileBrowserViewModel");
+            IsFileBrowserVisible = true;
         }
 
         private UnitMode m_units;
         private CoordinateMode m_coordMode;
         private bool m_isGpsEnabled;
         private bool m_isTrackingEnabled;
+        private bool m_isFileBrowserVisible;
         private GPS m_gps;
         private GPX m_gpx;
         private MapCompositeViewModel m_mapViewModel;
         private MapSidebarViewModel m_sidebarViewModel;
+        private FileBrowserViewModel m_fileBrowserViewModel;
         private GeocoordinateEx m_currentPosition;
 
         // For testing

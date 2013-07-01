@@ -94,6 +94,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BooleanToVisibilityConverter.cs" />
+    <Compile Include="Controls\FileBrowser.xaml.cs">
+      <DependentUpon>FileBrowser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
     </Compile>
@@ -120,6 +123,7 @@
     </Compile>
     <Compile Include="UriMapper.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ViewModels\FileBrowserViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MapCompositeViewModel.cs" />
     <Compile Include="ViewModels\MapSidebarViewModel.cs" />
@@ -130,6 +134,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="Controls\FileBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ImageButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -149,6 +157,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\DashMap_AppIcon.png" />
+    <Content Include="Assets\Icons\check.png" />
+    <Content Include="Assets\Icons\file.png" />
+    <Content Include="Assets\Icons\folder.png" />
+    <Content Include="Assets\Icons\up.png" />
     <Content Include="Assets\Test\rainier.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

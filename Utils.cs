@@ -73,5 +73,17 @@ namespace DashMap
 
             return collection;
         }
+
+        public static void ShowError(AggregateException ex, string caption = "DashMap")
+        {
+            string message = string.Empty;
+            foreach (Exception inner in ex.InnerExceptions)
+            {
+                message += inner.Message + "\n";
+            }
+
+            App.RootFrame.Dispatcher.BeginInvoke(() =>
+                System.Windows.MessageBox.Show(message, caption, System.Windows.MessageBoxButton.OK));
+        }
     }
 }

@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:DashMap"
     mc:Ignorable="d"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -14,13 +15,37 @@
         <Button Click="TheButton_Click"
                 IsEnabled="{Binding IsEnabled, ElementName=BtnRoot}">
             <StackPanel Orientation="{Binding Orientation, ElementName=BtnRoot}">
+                
+                <!--
+                    This is a giant hack to get the image to be faded when the button is disabled.
+                    When IsEnabled is false, it swaps out the regular image for one in a border
+                    with a dark background masked to the image.
+                -->
+                
+                <!-- Darkened image -->
+                <Border Background="{StaticResource PhoneDisabledBrush}"
+                        Opacity="0.5"
+                        Visibility="{Binding IsEnabled, ElementName=BtnRoot, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                    <Border.OpacityMask>
+                        <ImageBrush ImageSource="{Binding ImageSource, ElementName=BtnRoot}"/>
+                    </Border.OpacityMask>
+                    <Image Source="{Binding ImageSource, ElementName=BtnRoot}"
+                           Width="{Binding ImageWidth, ElementName=BtnRoot}"
+                           Height="{Binding ImageHeight, ElementName=BtnRoot}"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Regular image -->
                 <Image Source="{Binding ImageSource, ElementName=BtnRoot}"
-                       Width="{Binding ImageWidth, ElementName=BtnRoot}"
-                       Height="{Binding ImageHeight, ElementName=BtnRoot}"
-                       Margin="0,0,15,0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding Text, ElementName=BtnRoot}"/>
+                           Width="{Binding ImageWidth, ElementName=BtnRoot}"
+                           Height="{Binding ImageHeight, ElementName=BtnRoot}"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           Visibility="{Binding IsEnabled, ElementName=BtnRoot, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <TextBlock Text="{Binding Text, ElementName=BtnRoot}"
+                           Margin="15,0,0,0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
             </StackPanel>
         </Button>
     </Grid>
