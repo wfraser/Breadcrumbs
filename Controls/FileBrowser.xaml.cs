@@ -32,16 +32,19 @@ namespace DashMap
                 {
                     ViewModel.NavigateToSubfolder(item.FileName);
                 }
-                else if (ViewModel.Mode == ViewModels.FileBrowserMode.Save)
+                else
                 {
-                    var result = MessageBox.Show("Are you sure you want to overwrite that file?", "Confirm Overwrite", MessageBoxButton.OKCancel);
-                    if (result == MessageBoxResult.Cancel)
+                    if (ViewModel.Mode == ViewModels.FileBrowserMode.Save)
                     {
-                        return;
+                        var result = MessageBox.Show("Are you sure you want to overwrite that file?", "Confirm Overwrite", MessageBoxButton.OKCancel);
+                        if (result == MessageBoxResult.Cancel)
+                        {
+                            return;
+                        }
                     }
+
+                    ViewModel.SelectFile(item.FileName);
                 }
-                
-                ViewModel.SelectFile(item.FileName);
             }
             else if (ViewModel.Mode == ViewModels.FileBrowserMode.Save)
             {
