@@ -347,6 +347,42 @@ namespace DashMap.ViewModels
             m_mapViewModel.MapType = mapType;
         }
 
+        public void CycleUnits()
+        {
+            UnitMode mode = m_units;
+            switch (mode)
+            {
+                case UnitMode.Imperial:
+                    mode = UnitMode.Metric;
+                    break;
+                case UnitMode.Metric:
+                    mode = UnitMode.Imperial;
+                    break;
+            }
+            m_units = mode;
+            NotifyPropertyChanged("Altitude");
+            NotifyPropertyChanged("Accuracy");
+            NotifyPropertyChanged("Speed");
+        }
+
+        public void CycleCoordinateMode()
+        {
+            CoordinateMode mode = m_coordMode;
+            switch (mode)
+            {
+                case CoordinateMode.Decimal:
+                    mode = CoordinateMode.DMS;
+                    break;
+                case CoordinateMode.DMS:
+                    mode = CoordinateMode.Decimal;
+                    break;
+            }
+            m_coordMode = mode;
+            NotifyPropertyChanged("Latitude");
+            NotifyPropertyChanged("Longitude");
+            NotifyPropertyChanged("Heading");
+        }
+
         public async void SaveTrack()
         {
             StorageFolder local = ApplicationData.Current.LocalFolder;

@@ -93,25 +93,39 @@
         <Border BorderBrush="#333333"
                 BorderThickness="1,0,0,0"
                 Grid.Column="1"
+                Background="{StaticResource PhoneChromeBrush}"
                 Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel Grid.Column="1"
-                        Background="{StaticResource PhoneChromeBrush}">
-                <Button x:Name="MapToggle"
-                        Content="Map Type"
-                        Click="MapToggle_Click"/>
+            <ScrollViewer>
+                <StackPanel>
+                    <Button x:Name="MapToggle"
+                            Content="Map Type"
+                            Click="MapToggle_Click"/>
 
-                <Button x:Name="ClearButton"
-                        Content="Clear Track"
-                        Click="ClearButton_Click"/>
+                    <Button x:Name="ClearButton"
+                            Content="Clear Track"
+                            Click="ClearButton_Click"/>
                 
-                <Button x:Name="ExportButton"
-                        Content="Save Track"
-                        Click="ExportButton_Click"/>
+                    <Button x:Name="ExportButton"
+                            Content="Save Track"
+                            Click="ExportButton_Click"/>
+                    
+                    <Button x:Name="ImportButton"
+                            Content="Import Track"
+                            Click="ImportButton_Click"/>
+                    
+                    <Button x:Name="UnitToggleButton"
+                            Content="Unit Mode"
+                            Click="UnitToggleButton_Click"/>
+                    
+                    <Button x:Name="DMSToggleButton"
+                            Content="Coord Mode"
+                            Click="DMSToggleButton_Click"/>
                 
-                <Button x:Name="TestButton"
-                        Content="Test"
-                        Click="TestButton_Click"/>
-            </StackPanel>
+                    <Button x:Name="TestButton"
+                            Content="Test"
+                            Click="TestButton_Click"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
 </UserControl>

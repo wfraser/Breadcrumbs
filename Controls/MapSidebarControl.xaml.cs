@@ -86,6 +86,21 @@ namespace DashMap
             m_viewModel.MainVM.SaveTrack();
         }
 
+        private void ImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO
+        }
+
+        private void UnitToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            m_viewModel.MainVM.CycleUnits();
+        }
+
+        private void DMSToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            m_viewModel.MainVM.CycleCoordinateMode();
+        }
+
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             var thread = new System.Threading.Thread(
