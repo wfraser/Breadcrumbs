@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Resources;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Text;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Navigation;
@@ -86,7 +89,24 @@ namespace DashMap
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
             // Ensure that application state is restored appropriately
-            
+
+            CoordinateMode coordMode;
+            if (IsolatedStorageSettings.ApplicationSettings.TryGetValue("CoordinateMode", out coordMode))
+            {
+                ViewModel.CoordinateMode = coordMode;
+            }
+
+            UnitMode unitMode;
+            if (IsolatedStorageSettings.ApplicationSettings.TryGetValue("UnitMode", out unitMode))
+            {
+                ViewModel.UnitMode = unitMode;
+            }
+
+            string trackXml;
+            if (IsolatedStorageSettings.ApplicationSettings.TryGetValue("Track", out trackXml))
+            {
+                ViewModel.LoadTrack(trackXml);
+            }
         }
 
         // Code to execute when the application is deactivated (sent to background)
@@ -94,6 +114,10 @@ namespace DashMap
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
             // Ensure that required application state is persisted here.
+
+            IsolatedStorageSettings.ApplicationSettings["CoordinateMode"] = ViewModel.CoordinateMode;
+            IsolatedStorageSettings.ApplicationSettings["UnitMode"]       = ViewModel.UnitMode;
+            IsolatedStorageSettings.ApplicationSettings["Track"]          = ViewModel.GetTrackGPX();
         }
 
         // Code to execute when the application is closing (eg, user hit Back)

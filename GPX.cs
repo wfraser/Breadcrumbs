@@ -99,6 +99,11 @@ namespace DashMap
             m_tracks[0].Segments[m_tracks[0].Segments.Count - 1].Points.Add(point);
         }
 
+        public void ClearTracks()
+        {
+            m_tracks = new List<Track>();
+        }
+
         #region Inner GPX Classes
 
         public class Track
@@ -174,6 +179,17 @@ namespace DashMap
             {
                 get;
                 set;
+            }
+
+            [XmlIgnore]
+            public GeocoordinateEx GeocoordinateEx
+            {
+                get
+                {
+                    var coord = new GeocoordinateEx(Latitude, Longitude, Altitude);
+                    coord.Timestamp = DateTime;
+                    return coord;
+                }
             }
 
             public TrackPoint()

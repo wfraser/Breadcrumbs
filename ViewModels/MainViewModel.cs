@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Device.Location;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Microsoft.Phone.Maps.Controls;
 using Windows.Devices.Geolocation;
@@ -280,6 +281,36 @@ namespace DashMap.ViewModels
             }
         }
 
+        public CoordinateMode CoordinateMode
+        {
+            get { return m_coordMode; }
+            set
+            {
+                if (m_coordMode != value)
+                {
+                    m_coordMode = value;
+                    NotifyPropertyChanged("Latitude");
+                    NotifyPropertyChanged("Longitude");
+                    NotifyPropertyChanged("Heading");
+                }
+            }
+        }
+
+        public UnitMode UnitMode
+        {
+            get { return m_units; }
+            set
+            {
+                if (m_units != value)
+                {
+                    m_units = value;
+                    NotifyPropertyChanged("Altitude");
+                    NotifyPropertyChanged("Speed");
+                    NotifyPropertyChanged("Accuracy");
+                }
+            }
+        }
+
         internal ManualResetEvent LocationReadEvent
         {
             get { return m_locationRead; }
@@ -324,6 +355,7 @@ namespace DashMap.ViewModels
             {
                 handler();
             }
+            m_gpx.ClearTracks();
         }
 
         public void CycleMapType()
@@ -430,6 +462,20 @@ namespace DashMap.ViewModels
                 }));
             NotifyPropertyChanged("FileBrowserViewModel");
             IsFileBrowserVisible = true;
+        }
+
+        public string GetTrackGPX()
+        {
+            var gpxData = new MemoryStream();
+            m_gpx.Serialize(gpxData);
+            byte[] bytes = gpxData.ToArray();
+            return System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+        }
+
+        public void LoadTrack(string gpxData)
+        {
+            var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(gpxData));
+            m_gpx = GPX.Deserialize(stream);
         }
 
         private UnitMode m_units;
