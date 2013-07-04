@@ -7,6 +7,8 @@ namespace DashMap
 {
     public static class Utils
     {
+        public static readonly double EarthRadiusMeters = 6371008.7714; // WGS84 mean radius
+
         public static string ToDMS(double degrees)
         {
             double minutes = (degrees - Math.Floor(degrees)) * 60.0;
@@ -56,22 +58,48 @@ namespace DashMap
 
         public static GeoCoordinateCollection MakeCircle(GeoCoordinate center, double radiusMeters)
         {
-            int earthRadiusMeters = 6367000;
             double lat = ToRadians(center.Latitude);
             double lng = ToRadians(center.Longitude);
-            double angularRadius = radiusMeters / earthRadiusMeters;
+            double angularRadius = radiusMeters / EarthRadiusMeters;
             var collection = new GeoCoordinateCollection();
 
-            for (int x = 0; x <= 360; x++)
+            for (int x = 0; x < 360; x++) // 360 points might be overkill...
             {
-                // This is some Ph.D. math right here. (Okay, not really, but don't fuck with it.)
                 double circleRadians = ToRadians(x);
-                double latRadians = Math.Asin(Math.Sin(lat) * Math.Cos(angularRadius) + Math.Cos(lat) * Math.Sin(angularRadius) * Math.Cos(circleRadians));
-                double lngRadians = lng + Math.Atan2(Math.Sin(circleRadians) * Math.Sin(angularRadius) * Math.Cos(lat), Math.Cos(angularRadius) - Math.Sin(lat) * Math.Sin(latRadians));
+                double latRadians = Math.Asin(
+                                        Math.Sin(lat) * Math.Cos(angularRadius)
+                                        + Math.Cos(lat) * Math.Sin(angularRadius) * Math.Cos(circleRadians)
+                                        );
+                double lngRadians = lng + Math.Atan2(
+                                        Math.Sin(circleRadians) * Math.Sin(angularRadius) * Math.Cos(lat),
+                                        Math.Cos(angularRadius) - Math.Sin(lat) * Math.Sin(latRadians)
+                                        );
                 collection.Add(new GeoCoordinate(ToDegrees(latRadians), ToDegrees(lngRadians)));
             }
 
             return collection;
+        }
+
+        public static double GreatCircleDistance(GeocoordinateEx p1, GeocoordinateEx p2)
+        {
+            double lat1 = ToRadians(p1.Latitude);
+            double lng1 = ToRadians(p1.Longitude);
+            double lat2 = ToRadians(p2.Latitude);
+            double lng2 = ToRadians(p2.Latitude);
+            double deltaLng = Math.Abs(lng1 - lng2);
+
+            double centralAngle = Math.Atan2(
+                Math.Sqrt(
+                    Math.Pow(
+                        Math.Cos(lat2) * Math.Sin(deltaLng), 2)
+                    + Math.Pow(
+                        Math.Cos(lat1) * Math.Sin(lat2)
+                        - Math.Sin(lat1) * Math.Cos(lat2) * Math.Cos(deltaLng), 2)),
+                Math.Sin(lat1) * Math.Sin(lat2)
+                + Math.Cos(lat1) * Math.Cos(lat2) * Math.Cos(deltaLng)
+            );
+
+            return centralAngle * EarthRadiusMeters;
         }
 
         public static void ShowError(AggregateException ex, string caption = "DashMap")
