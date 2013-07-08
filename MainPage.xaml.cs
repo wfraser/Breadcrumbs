@@ -34,21 +34,12 @@ namespace DashMap
         {
             if (!IsolatedStorageSettings.ApplicationSettings.Contains("LocationConsent"))
             {
-                MessageBoxResult result = MessageBox.Show(
-                    "This app accesses your phone's location. Is that okay?",
-                    "Location",
-                    MessageBoxButton.OKCancel);
+                App.LocationConsentPrompt();
+            }
 
-                if (result == MessageBoxResult.OK)
-                {
-                    IsolatedStorageSettings.ApplicationSettings["LocationConsent"] = true;
-                }
-                else
-                {
-                    IsolatedStorageSettings.ApplicationSettings["LocationConsent"] = false;
-                }
-
-                IsolatedStorageSettings.ApplicationSettings.Save();
+            if (!IsolatedStorageSettings.ApplicationSettings.Contains("LockScreenConsent"))
+            {
+                App.LockScreenConsentPrompt();
             }
 
             UriMapper uriMapper = (UriMapper)App.RootFrame.UriMapper;

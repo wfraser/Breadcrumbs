@@ -14,6 +14,7 @@ namespace DashMap.ViewModels
         {
             get { return m_mainVM; }
         }
+        private MainViewModel m_mainVM;
 
         public string OverlayText
         {
@@ -24,6 +25,7 @@ namespace DashMap.ViewModels
                 NotifyPropertyChanged("OverlayText");
             }
         }
+        private string m_overlayText;
 
         public MapCartographicMode MapType
         {
@@ -34,6 +36,7 @@ namespace DashMap.ViewModels
                 NotifyPropertyChanged("MapType");
             }
         }
+        private MapCartographicMode m_mapType;
 
         public bool CenterOnCurrentPosition
         {
@@ -44,6 +47,7 @@ namespace DashMap.ViewModels
                 NotifyPropertyChanged("CenterOnCurrentPosition");
             }
         }
+        private bool m_centerOnCurrentPosition;
 
         public MapCompositeViewModel(MainViewModel mainVM)
         {
@@ -90,10 +94,5 @@ namespace DashMap.ViewModels
                 OverlayText = string.Empty;
             }
         }
-
-        private MainViewModel m_mainVM;
-        private string m_overlayText;
-        private MapCartographicMode m_mapType;
-        private bool m_centerOnCurrentPosition;
     }
 }

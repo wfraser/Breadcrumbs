@@ -78,6 +78,37 @@ namespace DashMap
             }
         }
 
+        public static bool LocationConsentPrompt()
+        {
+            MessageBoxResult result = MessageBox.Show(
+                    "This app accesses your phone's location. Is that okay?",
+                    "Location",
+                    MessageBoxButton.OKCancel);
+
+            bool ok = (result == MessageBoxResult.OK);
+
+            IsolatedStorageSettings.ApplicationSettings["LocationConsent"] = ok;
+            IsolatedStorageSettings.ApplicationSettings.Save();
+
+            return ok;
+        }
+
+        public static bool LockScreenConsentPrompt()
+        {
+            MessageBoxResult result = MessageBox.Show(
+                    "This app will stay running under your phone's lock screen when the GPS is enabled."
+                    + " Is that okay?",
+                    "Run Under Lock Screen",
+                    MessageBoxButton.OKCancel);
+
+            bool ok = (result == MessageBoxResult.OK);
+
+            IsolatedStorageSettings.ApplicationSettings["LockScreenConsent"] = ok;
+            IsolatedStorageSettings.ApplicationSettings.Save();
+
+            return ok;
+        }
+
         // Code to execute when the application is launching (eg, from Start)
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)

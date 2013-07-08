@@ -2,9 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Device.Location;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Threading;
 using Microsoft.Phone.Maps.Controls;
+using Microsoft.Phone.Shell;
 using Windows.Devices.Geolocation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -339,6 +341,27 @@ namespace DashMap.ViewModels
             else
             {
                 m_gps.Start();
+            }
+
+            if ((bool)IsolatedStorageSettings.ApplicationSettings["LockScreenConsent"])
+            {
+                try
+                {
+                    if (m_isGpsEnabled)
+                    {
+                        PhoneApplicationService.Current.ApplicationIdleDetectionMode = IdleDetectionMode.Disabled;
+                    }
+                    else
+                    {
+                        PhoneApplicationService.Current.ApplicationIdleDetectionMode = IdleDetectionMode.Enabled;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // This exception is expected in the current release.
+                    // See note towards the bottom of:
+                    // http://msdn.microsoft.com/en-US/library/windowsphone/develop/ff941090(v=vs.105).aspx
+                }
             }
         }
 

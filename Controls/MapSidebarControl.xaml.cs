@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Windows;
@@ -47,6 +48,15 @@ namespace DashMap
 
         private void GpsToggle_Click(object sender, RoutedEventArgs e)
         {
+            if (!(bool)IsolatedStorageSettings.ApplicationSettings["LocationConsent"])
+            {
+                if (!App.LocationConsentPrompt())
+                {
+                    // User doesn't want location.
+                    return;
+                }
+            }
+
             GpsToggle.IsEnabled = false;
             m_viewModel.MainVM.ToggleGps();
         }

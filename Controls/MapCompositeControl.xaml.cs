@@ -24,6 +24,20 @@ namespace DashMap
             InitializeComponent();
             m_mapLoaded = false;
             m_centerChangedByCode = false;
+
+            // Handle the lock screen coming up, a phone call being received, etc.
+            App.RootFrame.Obscured += RootFrame_Obscured;
+            App.RootFrame.Unobscured += RootFrame_Unobscured;
+        }
+
+        void RootFrame_Obscured(object sender, ObscuredEventArgs e)
+        {
+            MapControl.IsEnabled = false;
+        }
+
+        void RootFrame_Unobscured(object sender, EventArgs e)
+        {
+            MapControl.IsEnabled = true;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
