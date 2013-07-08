@@ -460,6 +460,7 @@ namespace DashMap.ViewModels
                     }
                     // else: save was cancelled or an error occured upstream
                 }));
+            m_fileBrowserViewModel.DefaultFileExtension = ".gpx";
             NotifyPropertyChanged("FileBrowserViewModel");
             IsFileBrowserVisible = true;
         }

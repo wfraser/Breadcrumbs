@@ -23,6 +23,13 @@ namespace DashMap.ViewModels
         }
         private MainViewModel m_mainVM;
 
+        public string DefaultFileExtension
+        {
+            get { return m_defaultFileExtension; }
+            set { m_defaultFileExtension = value; }
+        }
+        private string m_defaultFileExtension;
+
         public void Dismiss(IStorageFile result)
         {
             m_mainVM.IsFileBrowserVisible = false;
@@ -94,6 +101,12 @@ namespace DashMap.ViewModels
 
         public void SelectNewFile(string name)
         {
+            if (!string.IsNullOrEmpty(m_defaultFileExtension)
+                && !name.ToLower().EndsWith(m_defaultFileExtension))
+            {
+                name += m_defaultFileExtension;
+            }
+
             m_folder.CreateFileAsync(name).AsTask()
                 .ContinueWith(prevTask =>
                 {

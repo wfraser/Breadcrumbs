@@ -31,6 +31,7 @@ namespace DashMap
                 if (item.IsFolder)
                 {
                     ViewModel.NavigateToSubfolder(item.FileName);
+                    FileNameEntryBox.Text = string.Empty;
                 }
                 else
                 {
