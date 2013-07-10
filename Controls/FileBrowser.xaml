@@ -8,7 +8,8 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    d:DesignHeight="480" d:DesignWidth="800">
+    d:DesignHeight="480" d:DesignWidth="800"
+    Loaded="OnLoaded">
 
     <Grid x:Name="LayoutRoot"
             Background="{StaticResource PhoneChromeBrush}">
@@ -48,6 +49,7 @@
                  SelectionMode="Single"
                  ItemsSource="{Binding Items}"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                  SelectionChanged="ItemList_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -95,17 +97,19 @@
             <Button x:Name="DeleteButton"
                     Grid.Column="3"
                     Content="Delete"
+                    IsEnabled="False"
                     Click="DeleteButton_Click"/>
 
             <Button x:Name="NewFolderButton"
                     Grid.Column="5"
                     Content="New Folder"
+                    IsEnabled="False"
                     Click="NewFolderButton_Click"/>
 
             <local:ImageButton x:Name="SelectButton"
                                Grid.Column="7"
                                ImageSource="/Assets/Icons/check.png"
-                               Text="Select"
+                               Text="{Binding SelectButtonText}"
                                IsEnabled="False"
                                Click="SelectItem"/>
         </Grid>

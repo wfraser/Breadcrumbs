@@ -21,13 +21,6 @@ namespace DashMap
         {
             InitializeComponent();
             DataContext = m_viewModel = App.ViewModel;
-
-            var fileBrowserVisibility = new Binding("DataContext.IsFileBrowserVisible")
-            {
-                ElementName = "MainPageRoot",
-                Converter = App.Current.Resources["BooleanToVisibilityConverter"] as BooleanToVisibilityConverter,
-            };
-            FileBrowser.SetBinding(FileBrowser.VisibilityProperty, fileBrowserVisibility);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

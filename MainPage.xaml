@@ -55,7 +55,7 @@
         <!-- used to be: Visibility="{Binding DataContext.IsFileBrowserVisible, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" -->
         <local:FileBrowser x:Name="FileBrowser"
                            Grid.ColumnSpan="3"
-                           Visibility="Collapsed"
+                           Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                            DataContext="{Binding FileBrowserViewModel}"/>
     </Grid>
 

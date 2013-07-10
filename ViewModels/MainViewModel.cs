@@ -76,19 +76,6 @@ namespace DashMap.ViewModels
             }
         }
 
-        public bool IsFileBrowserVisible
-        {
-            get { return m_isFileBrowserVisible; }
-            set
-            {
-                if (value != m_isFileBrowserVisible)
-                {
-                    m_isFileBrowserVisible = value;
-                    NotifyPropertyChanged("IsFileBrowserVisible");
-                }
-            }
-        }
-
         public string Latitude
         {
             get
@@ -322,8 +309,8 @@ namespace DashMap.ViewModels
         {
             m_mapViewModel = new MapCompositeViewModel(this);
             m_sidebarViewModel = new MapSidebarViewModel(this);
+            m_fileBrowserViewModel = new FileBrowserViewModel(this);
             m_isGpsEnabled = false;
-            m_isFileBrowserVisible = false;
             m_gps = new GPS(this);
             m_gpx = new GPX();
             m_units = UnitMode.Imperial;
@@ -457,11 +444,10 @@ namespace DashMap.ViewModels
                 gpxFolder = await local.CreateFolderAsync("GPX");
             }
 
-            m_fileBrowserViewModel = new FileBrowserViewModel(
-                this,
-                gpxFolder,
-                ViewModels.FileBrowserMode.Save,
-                new Action<IStorageFile>(result =>
+            m_fileBrowserViewModel.StartingFolder = gpxFolder;
+            m_fileBrowserViewModel.Mode = FileBrowserMode.Save;
+            m_fileBrowserViewModel.DefaultFileExtension = ".gpx";
+            m_fileBrowserViewModel.Dismissed = new Action<IStorageFile>(result =>
                 {
                     if (result != null)
                     {
@@ -482,10 +468,9 @@ namespace DashMap.ViewModels
                             });
                     }
                     // else: save was cancelled or an error occured upstream
-                }));
-            m_fileBrowserViewModel.DefaultFileExtension = ".gpx";
-            NotifyPropertyChanged("FileBrowserViewModel");
-            IsFileBrowserVisible = true;
+                });
+
+            m_fileBrowserViewModel.IsVisible = true;
         }
 
         public string GetTrackGPX()
@@ -506,7 +491,6 @@ namespace DashMap.ViewModels
         private CoordinateMode m_coordMode;
         private bool m_isGpsEnabled;
         private bool m_isTrackingEnabled;
-        private bool m_isFileBrowserVisible;
         private GPS m_gps;
         private GPX m_gpx;
         private MapCompositeViewModel m_mapViewModel;

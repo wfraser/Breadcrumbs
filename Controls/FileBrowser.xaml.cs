@@ -19,7 +19,13 @@ namespace DashMap
 
         private ViewModels.FileBrowserViewModel ViewModel
         {
-            get { return (ViewModels.FileBrowserViewModel)DataContext; }
+            get { return m_viewModel; }
+        }
+        private ViewModels.FileBrowserViewModel m_viewModel;
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            m_viewModel = (ViewModels.FileBrowserViewModel)DataContext;
         }
 
         private void SelectItem(object sender, RoutedEventArgs e)
@@ -31,7 +37,6 @@ namespace DashMap
                 if (item.IsFolder)
                 {
                     ViewModel.NavigateToSubfolder(item.FileName);
-                    FileNameEntryBox.Text = string.Empty;
                 }
                 else
                 {
@@ -51,16 +56,20 @@ namespace DashMap
             {
                 ViewModel.SelectNewFile(FileNameEntryBox.Text);
             }
+
+            FileNameEntryBox.Text = string.Empty;
         }
 
         private void NewFolderButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.MakeDirectory(FileNameEntryBox.Text);
+            FileNameEntryBox.Text = string.Empty;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Dismiss(null);
+            FileNameEntryBox.Text = string.Empty;
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -72,6 +81,8 @@ namespace DashMap
             }
 
             ViewModel.DeleteItem(item.FileName);
+
+            FileNameEntryBox.Text = string.Empty;
         }
 
         private void ItemList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -91,12 +102,18 @@ namespace DashMap
             if (selectedItem != null)
             {
                 FileNameEntryBox.Text = selectedItem.FileName;
+                DeleteButton.IsEnabled = true;
+            }
+            else
+            {
+                DeleteButton.IsEnabled = false;
             }
         }
 
         private void UpButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigateUp();
+            FileNameEntryBox.Text = string.Empty;
         }
 
         private void FolderNameScrollViewer_LayoutUpdated(object sender, EventArgs e)
@@ -125,10 +142,12 @@ namespace DashMap
 
             if (string.IsNullOrEmpty(FileNameEntryBox.Text) && (ItemList.SelectedItem == null))
             {
+                NewFolderButton.IsEnabled = false;
                 SelectButton.IsEnabled = false;
             }
             else if (ViewModel.Mode == ViewModels.FileBrowserMode.Save)
             {
+                NewFolderButton.IsEnabled = true;
                 SelectButton.IsEnabled = true;
             }
         }

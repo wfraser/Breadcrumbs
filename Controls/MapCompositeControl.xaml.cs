@@ -35,19 +35,25 @@ namespace DashMap
         {
             // Disable automatic centering on current position.
             // This prevents the map from scrolling and downloading new tiles while obscured.
-            m_oldCenterOnCurrentPosition = m_viewModel.CenterOnCurrentPosition;
-            m_viewModel.CenterOnCurrentPosition = false;
+            if (m_viewModel != null)
+            {
+                m_oldCenterOnCurrentPosition = m_viewModel.CenterOnCurrentPosition;
+                m_viewModel.CenterOnCurrentPosition = false;
+            }
         }
 
-        private bool m_oldCenterOnCurrentPosition;
+        private bool? m_oldCenterOnCurrentPosition;
 
         void RootFrame_Unobscured(object sender, EventArgs e)
         {
-            m_viewModel.CenterOnCurrentPosition = m_oldCenterOnCurrentPosition;
-            if (m_oldCenterOnCurrentPosition)
+            if (m_oldCenterOnCurrentPosition.HasValue)
             {
-                // Need to re-center the map.
-                MapControl.Center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
+                m_viewModel.CenterOnCurrentPosition = m_oldCenterOnCurrentPosition.Value;
+                if (m_oldCenterOnCurrentPosition.Value)
+                {
+                    // Need to re-center the map.
+                    MapControl.Center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
+                }
             }
         }
         #endregion RootFrame Obscured
