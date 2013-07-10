@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
 using Windows.Devices.Geolocation;
@@ -427,24 +428,7 @@ namespace DashMap.ViewModels
 
         public async void SaveTrack()
         {
-            StorageFolder local = ApplicationData.Current.LocalFolder;
-
-            StorageFolder gpxFolder = null;
-            try
-            {
-                gpxFolder = await local.GetFolderAsync("GPX");
-            }
-            catch (FileNotFoundException)
-            {
-                // do nothing
-            }
-
-            if (gpxFolder == null)
-            {
-                gpxFolder = await local.CreateFolderAsync("GPX");
-            }
-
-            m_fileBrowserViewModel.StartingFolder = gpxFolder;
+            m_fileBrowserViewModel.StartingFolder = await GetLocalGpxFolder();
             m_fileBrowserViewModel.Mode = FileBrowserMode.Save;
             m_fileBrowserViewModel.DefaultFileExtension = ".gpx";
             m_fileBrowserViewModel.Dismissed = new Action<IStorageFile>(result =>
@@ -473,18 +457,66 @@ namespace DashMap.ViewModels
             m_fileBrowserViewModel.IsVisible = true;
         }
 
+        public async void LoadTrack(string gpxData = null)
+        {
+            if (gpxData == null)
+            {
+                m_fileBrowserViewModel.StartingFolder = await GetLocalGpxFolder();
+                m_fileBrowserViewModel.Mode = FileBrowserMode.Open;
+
+                m_fileBrowserViewModel.Dismissed = new Action<IStorageFile>(async result =>
+                    {
+                        m_gpx = GPX.Deserialize(await result.OpenStreamForReadAsync());
+                    });
+
+                m_fileBrowserViewModel.IsVisible = true;
+            }
+            else
+            {
+                var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(gpxData));
+                m_gpx = GPX.Deserialize(stream);
+            }
+
+            // TODO: re-draw the track from the newly-loaded GPX file.
+        }
+
+        private async Task<IStorageFolder> GetLocalGpxFolder()
+        {
+            if (m_localGpxFolder != null)
+            {
+                return m_localGpxFolder;
+            }
+            else
+            {
+                StorageFolder local = ApplicationData.Current.LocalFolder;
+
+                StorageFolder gpxFolder = null;
+                try
+                {
+                    gpxFolder = await local.GetFolderAsync("GPX");
+                }
+                catch (FileNotFoundException)
+                {
+                    // do nothing
+                }
+
+                if (gpxFolder == null)
+                {
+                    gpxFolder = await local.CreateFolderAsync("GPX");
+                }
+
+                m_localGpxFolder = gpxFolder;
+                return gpxFolder;
+            }
+        }
+        private static IStorageFolder m_localGpxFolder = null;
+
         public string GetTrackGPX()
         {
             var gpxData = new MemoryStream();
             m_gpx.Serialize(gpxData);
             byte[] bytes = gpxData.ToArray();
             return System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
-        }
-
-        public void LoadTrack(string gpxData)
-        {
-            var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(gpxData));
-            m_gpx = GPX.Deserialize(stream);
         }
 
         private UnitMode m_units;

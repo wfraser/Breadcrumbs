@@ -98,7 +98,7 @@ namespace DashMap
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO
+            m_viewModel.MainVM.LoadTrack();
         }
 
         private void UnitToggleButton_Click(object sender, RoutedEventArgs e)
