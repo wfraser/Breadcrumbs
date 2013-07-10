@@ -466,7 +466,10 @@ namespace Breadcrumbs.ViewModels
 
                 m_fileBrowserViewModel.Dismissed = new Action<IStorageFile>(async result =>
                     {
-                        m_gpx = GPX.Deserialize(await result.OpenStreamForReadAsync());
+                        if (result != null)
+                        {
+                            m_gpx = GPX.Deserialize(await result.OpenStreamForReadAsync());
+                        }
                     });
 
                 m_fileBrowserViewModel.IsVisible = true;

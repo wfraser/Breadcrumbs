@@ -49,7 +49,7 @@ namespace Breadcrumbs
             if (m_oldCenterOnCurrentPosition.HasValue)
             {
                 m_viewModel.CenterOnCurrentPosition = m_oldCenterOnCurrentPosition.Value;
-                if (m_oldCenterOnCurrentPosition.Value)
+                if (m_oldCenterOnCurrentPosition.Value && m_viewModel.MainVM.CurrentPosition != null)
                 {
                     // Need to re-center the map.
                     MapControl.Center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
