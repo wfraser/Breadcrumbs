@@ -9,10 +9,10 @@ using System.Windows.Data;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using DashMap.Resources;
-using DashMap.ViewModels;
+using Breadcrumbs.Resources;
+using Breadcrumbs.ViewModels;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     public partial class MainPage : PhoneApplicationPage
     {
@@ -40,7 +40,7 @@ namespace DashMap
             {
                 MessageBox.Show(
                     "Sorry, support for loading GPX files isn't finished yet.",
-                    "DashMap GPX Import",
+                    "Breadcrumbs GPX Import",
                     MessageBoxButton.OK);
             }
         }

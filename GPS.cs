@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Phone.Shell;
 using Windows.Devices.Geolocation;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     public class GPS
     {

@@ -12,10 +12,10 @@ using Windows.Devices.Geolocation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
-using DashMap;
-using DashMap.Resources;
+using Breadcrumbs;
+using Breadcrumbs.Resources;
 
-namespace DashMap.ViewModels
+namespace Breadcrumbs.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {

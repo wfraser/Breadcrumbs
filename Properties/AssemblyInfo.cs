@@ -6,11 +6,11 @@ using System.Resources;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DashMap")]
+[assembly: AssemblyTitle("Breadcrumbs")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Codewise.org")]
-[assembly: AssemblyProduct("DashMap")]
+[assembly: AssemblyProduct("Breadcrumbs")]
 [assembly: AssemblyCopyright("Copyright © William R. Fraser 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -9,10 +9,10 @@ using System.Windows.Markup;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using DashMap.Resources;
-using DashMap.ViewModels;
+using Breadcrumbs.Resources;
+using Breadcrumbs.ViewModels;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     public partial class App : Application
     {

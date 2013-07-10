@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Windows.Storage;
 
-namespace DashMap.ViewModels
+namespace Breadcrumbs.ViewModels
 {
     public enum FileBrowserMode
     {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     //
     // This is a minimal implementation of GPX 1.1, just enough to save track data.
@@ -43,7 +43,7 @@ namespace DashMap
         {
             m_tracks = new List<Track>();
             Version = "1.1";
-            Creator = "DashMap/" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            Creator = "Breadcrumbs/" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         }
 
         public void Serialize(Stream stream)

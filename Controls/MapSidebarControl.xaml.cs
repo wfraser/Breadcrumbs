@@ -9,7 +9,7 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     public partial class MapSidebarControl : UserControl
     {

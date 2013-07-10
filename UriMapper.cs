@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Navigation;
 using Windows.Phone.Storage.SharedAccess;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     internal class UriMapper : UriMapperBase
     {

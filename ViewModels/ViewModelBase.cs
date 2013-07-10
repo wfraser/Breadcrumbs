@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DashMap.ViewModels
+namespace Breadcrumbs.ViewModels
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

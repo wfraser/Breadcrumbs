@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     //
     // Replacements for Windows.Devices.Geolocation.*

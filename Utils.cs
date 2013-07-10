@@ -3,7 +3,7 @@ using System.Device.Location;
 using Microsoft.Phone.Maps.Controls;
 using Windows.Devices.Geolocation;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     public static class Utils
     {
@@ -102,7 +102,7 @@ namespace DashMap
             return centralAngle * EarthRadiusMeters;
         }
 
-        public static void ShowError(AggregateException ex, string caption = "DashMap")
+        public static void ShowError(AggregateException ex, string caption = "Breadcrumbs")
         {
             string message = string.Empty;
             foreach (Exception inner in ex.InnerExceptions)

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     public class BooleanToVisibilityConverter : IValueConverter
     {

@@ -1,6 +1,6 @@
-﻿using DashMap.Resources;
+﻿using Breadcrumbs.Resources;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     /// <summary>
     /// Provides access to string resources.

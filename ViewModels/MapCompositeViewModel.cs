@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Microsoft.Phone.Maps.Controls;
 
-namespace DashMap.ViewModels
+namespace Breadcrumbs.ViewModels
 {
     public class MapCompositeViewModel : ViewModelBase
     {

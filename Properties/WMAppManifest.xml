@@ -4,8 +4,8 @@
   <Languages xmlns="">
     <Language code="en-US" />
   </Languages>
-  <App xmlns="" ProductID="{bcc05806-4a4f-4716-a66c-a4d5a62a9661}" Title="DashMap" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="William R. Fraser" Description="A GPS map designed for real-time tracking on your car's dashboard." Publisher="Codewise.org" PublisherID="{a11c718e-575b-4694-b175-4dfb22f26d3c}">
-    <IconPath IsRelative="true" IsResource="false">Assets\DashMap_AppIcon.png</IconPath>
+  <App xmlns="" ProductID="{bcc05806-4a4f-4716-a66c-a4d5a62a9661}" Title="Breadcrumbs" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="William R. Fraser" Description="A GPS map designed for real-time tracking of your adventures. Supports import/export of tracks to GPX files." Publisher="Codewise.org" PublisherID="{a11c718e-575b-4694-b175-4dfb22f26d3c}">
+    <IconPath IsRelative="true" IsResource="false">Assets\Breadcrumbs_AppIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
       <Capability Name="ID_CAP_SENSORS" />
@@ -16,12 +16,12 @@
       <DefaultTask Name="_default" NavigationPage="MainPage.xaml" />
     </Tasks>
     <Tokens>
-      <PrimaryToken TokenID="DashMapToken" TaskName="_default">
+      <PrimaryToken TokenID="BreadcrumbsToken" TaskName="_default">
         <TemplateFlip>
-          <SmallImageURI IsRelative="true" IsResource="false">Assets\Tiles\DashMap_SmallTile.png</SmallImageURI>
+          <SmallImageURI IsRelative="true" IsResource="false">Assets\Tiles\Breadcrumbs_SmallTile.png</SmallImageURI>
           <Count>0</Count>
-          <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\DashMap_MediumTile.png</BackgroundImageURI>
-          <Title>DashMap</Title>
+          <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\Breadcrumbs_MediumTile.png</BackgroundImageURI>
+          <Title>Breadcrumbs</Title>
           <BackContent>
           </BackContent>
           <BackBackgroundImageURI IsRelative="true" IsResource="false">

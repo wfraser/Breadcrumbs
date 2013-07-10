@@ -12,7 +12,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
 
-namespace DashMap
+namespace Breadcrumbs
 {
     public partial class MapCompositeControl : UserControl
     {
