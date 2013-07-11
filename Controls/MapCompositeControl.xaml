@@ -34,17 +34,13 @@
                   Background="{StaticResource PhoneBackgroundBrush}"
                   Loaded="MapControl_Loaded">
             <maps:Map.MapElements>
-                <maps:MapPolyline x:Name="Track"
-                                  StrokeColor="Crimson"
-                                  StrokeThickness="5"
-                                  />
                 <maps:MapPolygon x:Name="CurrentPositionCircle"
                                  FillColor="#300000FF"
                                  StrokeColor="Blue"
                                  StrokeThickness="5"/>
             </maps:Map.MapElements>
         </maps:Map>
-        
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

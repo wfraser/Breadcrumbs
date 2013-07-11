@@ -88,8 +88,11 @@ namespace Breadcrumbs
 
         void MainVM_TrackCleared()
         {
-            Track.Path.Clear();
-            MapControl.MapElements[0] = Track; // This is to get the map to refresh.
+            while (MapControl.MapElements.Count > 1) // Leave the current position circle.
+            {
+                MapControl.MapElements.RemoveAt(0);
+            }
+            AddTrack();
         }
 
         void MainVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -103,13 +106,31 @@ namespace Breadcrumbs
 
                     if (m_viewModel.MainVM.IsTrackingEnabled)
                     {
-                        Track.Path.Add(center);
+                        // The current position circle is always last.
+                        System.Diagnostics.Debug.Assert(MapControl.MapElements.Count > 1);
+                        MapPolyline segment = (MapControl.MapElements[MapControl.MapElements.Count - 2] as MapPolyline);
+                        if (segment != null)
+                        {
+                            segment.Path.Add(center);
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.Assert(false);
+                        }
                     }
 
                     if (m_viewModel.CenterOnCurrentPosition)
                     {
                         m_centerChangedByCode = true;
                         MapControl.Center = center;
+                    }
+                    break;
+
+                case "IsTrackingEnabled":
+                    if (!m_viewModel.MainVM.IsTrackingEnabled)
+                    {
+                        // Tracking disabled; create a new track line layer.
+                        AddTrack();
                     }
                     break;
             }
@@ -188,11 +209,21 @@ namespace Breadcrumbs
             // on them does nothing (other than creating the empty variables). We need to manually
             // look them up at load time.
 
-            Track = MapControl.MapElements[0] as MapPolyline;
-            CurrentPositionCircle = MapControl.MapElements[1] as MapPolygon;
+            CurrentPositionCircle = MapControl.MapElements.Last() as MapPolygon;
 
-            System.Diagnostics.Debug.Assert(Track != null);
             System.Diagnostics.Debug.Assert(CurrentPositionCircle != null);
+
+            AddTrack();
+        }
+
+        private void AddTrack()
+        {
+            var line = new MapPolyline();
+            line.StrokeColor = Colors.Red;
+            line.StrokeThickness = 5.0;
+
+            // Insert the new track segment right behind the current position circle, which is last.
+            MapControl.MapElements.Insert(MapControl.MapElements.Count - 1, line);
         }
 
         bool m_centerChangedByCode;
