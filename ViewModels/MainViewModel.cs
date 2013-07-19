@@ -358,13 +358,13 @@ namespace Breadcrumbs.ViewModels
             IsTrackingEnabled = !IsTrackingEnabled;
         }
 
-        public event Action TrackCleared;
+        public event EventHandler TrackCleared;
         public void ClearTrack()
         {
             var handler = TrackCleared;
             if (handler != null)
             {
-                handler();
+                handler(this, new EventArgs());
             }
             m_gpx.ClearTracks();
         }
@@ -431,8 +431,9 @@ namespace Breadcrumbs.ViewModels
             m_fileBrowserViewModel.StartingFolder = await GetLocalGpxFolder();
             m_fileBrowserViewModel.Mode = FileBrowserMode.Save;
             m_fileBrowserViewModel.DefaultFileExtension = ".gpx";
-            m_fileBrowserViewModel.Dismissed = new Action<IStorageFile>(result =>
+            m_fileBrowserViewModel.SetDismissedAction(new Action<FileBrowserViewModel, IStorageFile>((sender, result) =>
                 {
+                    sender.SetDismissedAction(null);
                     if (result != null)
                     {
                         result.OpenStreamForWriteAsync()
@@ -452,7 +453,7 @@ namespace Breadcrumbs.ViewModels
                             });
                     }
                     // else: save was cancelled or an error occured upstream
-                });
+                }));
 
             m_fileBrowserViewModel.IsVisible = true;
         }
@@ -464,13 +465,14 @@ namespace Breadcrumbs.ViewModels
                 m_fileBrowserViewModel.StartingFolder = await GetLocalGpxFolder();
                 m_fileBrowserViewModel.Mode = FileBrowserMode.Open;
 
-                m_fileBrowserViewModel.Dismissed = new Action<IStorageFile>(async result =>
+                m_fileBrowserViewModel.SetDismissedAction(new Action<FileBrowserViewModel, IStorageFile>(async (sender, result) =>
                     {
+                        sender.SetDismissedAction(null);
                         if (result != null)
                         {
                             m_gpx = GPX.Deserialize(await result.OpenStreamForReadAsync());
                         }
-                    });
+                    }));
 
                 m_fileBrowserViewModel.IsVisible = true;
             }
@@ -485,9 +487,9 @@ namespace Breadcrumbs.ViewModels
 
         private async Task<IStorageFolder> GetLocalGpxFolder()
         {
-            if (m_localGpxFolder != null)
+            if (s_localGpxFolder != null)
             {
-                return m_localGpxFolder;
+                return s_localGpxFolder;
             }
             else
             {
@@ -508,11 +510,11 @@ namespace Breadcrumbs.ViewModels
                     gpxFolder = await local.CreateFolderAsync("GPX");
                 }
 
-                m_localGpxFolder = gpxFolder;
+                s_localGpxFolder = gpxFolder;
                 return gpxFolder;
             }
         }
-        private static IStorageFolder m_localGpxFolder = null;
+        private static IStorageFolder s_localGpxFolder = null;
 
         public string GetTrackGPX()
         {

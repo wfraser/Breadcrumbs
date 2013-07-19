@@ -12,7 +12,7 @@ namespace Breadcrumbs
 {
     public partial class ImageButton : UserControl
     {
-        public static DependencyProperty OrientationProperty =
+        public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register("Orientation", typeof(Orientation), typeof(ImageButton),
                 new PropertyMetadata(System.Windows.Controls.Orientation.Horizontal));
         public Orientation Orientation
@@ -21,7 +21,7 @@ namespace Breadcrumbs
             set { SetValue(OrientationProperty, value); }
         }
 
-        public static DependencyProperty ImageSourceProperty =
+        public static readonly DependencyProperty ImageSourceProperty =
             DependencyProperty.Register("ImageSource", typeof(Uri), typeof(ImageButton),
                 null);
         public Uri ImageSource
@@ -30,7 +30,7 @@ namespace Breadcrumbs
             set { SetValue(ImageSourceProperty, value); }
         }
 
-        public static DependencyProperty ImageHeightProperty =
+        public static readonly DependencyProperty ImageHeightProperty =
             DependencyProperty.Register("ImageHeight", typeof(int), typeof(ImageButton),
                 new PropertyMetadata(32));
         public int ImageHeight
@@ -39,7 +39,7 @@ namespace Breadcrumbs
             set { SetValue(ImageHeightProperty, value); }
         }
 
-        public static DependencyProperty ImageWidthProperty =
+        public static readonly DependencyProperty ImageWidthProperty =
             DependencyProperty.Register("ImageWidth", typeof(int), typeof(ImageButton),
                 new PropertyMetadata(32));
         public int ImageWidth
@@ -48,7 +48,7 @@ namespace Breadcrumbs
             set { SetValue(ImageWidthProperty, value); }
         }
 
-        public static DependencyProperty TextProperty =
+        public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(ImageButton),
                 new PropertyMetadata("Button"));
         public string Text
@@ -57,7 +57,7 @@ namespace Breadcrumbs
             set { SetValue(TextProperty, value); }
         }
 
-        public static new DependencyProperty IsEnabledProperty =
+        public static readonly new DependencyProperty IsEnabledProperty =
             DependencyProperty.Register("IsEnabled", typeof(bool), typeof(ImageButton),
                 new PropertyMetadata(true));
         public new bool IsEnabled

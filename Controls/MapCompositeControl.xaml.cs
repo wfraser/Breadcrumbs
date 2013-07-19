@@ -86,7 +86,7 @@ namespace Breadcrumbs
             });
         }
 
-        void MainVM_TrackCleared()
+        void MainVM_TrackCleared(object sender, EventArgs e)
         {
             while (MapControl.MapElements.Count > 1) // Leave the current position circle.
             {

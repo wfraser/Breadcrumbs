@@ -48,14 +48,14 @@ namespace Breadcrumbs.ViewModels
 
             if (m_onDismissed != null)
             {
-                m_onDismissed(result);
+                m_onDismissed(this, result);
             }
         }
-        public Action<IStorageFile> Dismissed
+        public void SetDismissedAction(Action<FileBrowserViewModel, IStorageFile> action)
         {
-            set { m_onDismissed = value; }
+            m_onDismissed = action;
         }
-        private Action<IStorageFile> m_onDismissed;
+        private Action<FileBrowserViewModel, IStorageFile> m_onDismissed;
 
         public string FolderName
         {
@@ -191,6 +191,12 @@ namespace Breadcrumbs.ViewModels
 
         public void SelectNewFile(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                Utils.ShowError("Name can't be null/empty.");
+                return;
+            }
+
             if (!string.IsNullOrEmpty(m_defaultFileExtension)
                 && !name.ToLower().EndsWith(m_defaultFileExtension))
             {
@@ -388,6 +394,7 @@ namespace Breadcrumbs.ViewModels
             public FileBrowserEntryEnumerator(IEnumerable<IStorageItem> items)
             {
                 m_items = items.GetEnumerator();
+                disposed = false;
             }
 
             public bool MoveNext()
@@ -413,11 +420,21 @@ namespace Breadcrumbs.ViewModels
                 m_items.Reset();
             }
 
-            public void Dispose()
+            protected virtual void Dispose(bool disposing)
             {
-                m_items.Dispose();
+                if (!disposed && disposing)
+                {
+                    m_items.Dispose();
+                }
             }
 
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            private bool disposed;
             private IEnumerator<IStorageItem> m_items;
         }
 

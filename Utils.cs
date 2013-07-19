@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Device.Location;
+using System.Diagnostics;
+using System.Text;
+using System.Windows;
 using Microsoft.Phone.Maps.Controls;
 using Windows.Devices.Geolocation;
 
@@ -24,6 +27,9 @@ namespace Breadcrumbs
 
         public static GeoCoordinate ConvertGeocoordinate(Geocoordinate coord)
         {
+            if (coord == null)
+                return null;
+
             return new GeoCoordinate(
                 coord.Latitude,
                 coord.Longitude,
@@ -36,6 +42,9 @@ namespace Breadcrumbs
 
         public static GeoCoordinate ConvertGeocoordinate(GeocoordinateEx coord)
         {
+            if (coord == null)
+                return null;
+
             return new GeoCoordinate(
                 coord.Latitude,
                 coord.Longitude,
@@ -58,6 +67,12 @@ namespace Breadcrumbs
 
         public static GeoCoordinateCollection MakeCircle(GeoCoordinate center, double radiusMeters)
         {
+            if (center == null)
+            {
+                Utils.ShowError("Center can't be null");
+                return new GeoCoordinateCollection();
+            }
+
             double lat = ToRadians(center.Latitude);
             double lng = ToRadians(center.Longitude);
             double angularRadius = radiusMeters / EarthRadiusMeters;
@@ -82,6 +97,12 @@ namespace Breadcrumbs
 
         public static double GreatCircleDistance(GeocoordinateEx p1, GeocoordinateEx p2)
         {
+            if (p1 == null || p2 == null)
+            {
+                Utils.ShowError("Both coordinates must be non-null");
+                return 0.0;
+            }
+
             double lat1 = ToRadians(p1.Latitude);
             double lng1 = ToRadians(p1.Longitude);
             double lat2 = ToRadians(p2.Latitude);
@@ -102,16 +123,38 @@ namespace Breadcrumbs
             return centralAngle * EarthRadiusMeters;
         }
 
+        public static void ShowError(string message, string caption = "Breadcumbs")
+        {
+            var stack = new StackTrace(skipFrames: 1);
+            message = "Error: " + message + "\n\n" + stack.ToString();
+            ShowErrorMessage(message, caption);
+        }
+
         public static void ShowError(AggregateException ex, string caption = "Breadcrumbs")
         {
             string message = string.Empty;
-            foreach (Exception inner in ex.InnerExceptions)
+            if (ex == null)
             {
-                message += inner.Message + "\n";
+                message = "Empty exception!";
+            }
+            else
+            {
+                var sb = new StringBuilder();
+                foreach (Exception inner in ex.InnerExceptions)
+                {
+                    sb.AppendLine(inner.Message);
+                }
+                message = sb.ToString();
             }
 
+            ShowErrorMessage(message, caption);
+        }
+
+        private static void ShowErrorMessage(string message, string caption)
+        {
+            Debugger.Break();
             App.RootFrame.Dispatcher.BeginInvoke(() =>
-                System.Windows.MessageBox.Show(message, caption, System.Windows.MessageBoxButton.OK));
+                MessageBox.Show(message, caption, System.Windows.MessageBoxButton.OK));
         }
     }
 }

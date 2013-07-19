@@ -83,6 +83,12 @@ namespace Breadcrumbs
 
         public void AddTrackPoint(GeocoordinateEx coordinate)
         {
+            if (coordinate == null)
+            {
+                Utils.ShowError("Coordinate can't be null");
+                return;
+            }
+
             if (m_tracks.Count == 0)
             {
                 NewTrackSegment();
@@ -167,7 +173,7 @@ namespace Breadcrumbs
             }
 
             [XmlElement("time")]
-            public string DateTimeStr
+            public string DateTimeString
             {
                 // ISO 8601 date/time format: "2013-06-28T04:31:25.1234567Z"
                 get { return DateTime.ToUniversalTime().ToString("o"); }

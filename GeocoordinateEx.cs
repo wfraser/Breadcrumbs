@@ -81,6 +81,12 @@ namespace Breadcrumbs
 
         public GeocoordinateEx(Geocoordinate real)
         {
+            if (real == null)
+            {
+                Utils.ShowError("Coordinate can't be null");
+                return;
+            }
+
             m_real = real;
             m_accuracy = real.Accuracy;
             m_altitude = real.Altitude;

@@ -28,6 +28,12 @@ namespace Breadcrumbs
 
         public override Uri MapUri(Uri uri)
         {
+            if (uri == null)
+            {
+                Utils.ShowError("URI can't be null");
+                return null;
+            }
+
             string uriStr = uri.ToString();
 
             if (uriStr.StartsWith("/FileTypeAssociation"))
