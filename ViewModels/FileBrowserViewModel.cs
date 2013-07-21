@@ -361,6 +361,16 @@ namespace Breadcrumbs.ViewModels
                 });
         }
 
+        public void CloudSync()
+        {
+            m_mainVM.CloudSync.Test().ContinueWith(prevTask =>
+                App.RootFrame.Dispatcher.BeginInvoke(() =>
+                    MessageBox.Show("Sorry, this feature isn't implemented yet.\n"
+                                        + (prevTask.Result ? "But auth works!" : "Auth failed!"),
+                                    "SkyDrive Cloud Sync",
+                                    MessageBoxButton.OK)));
+        }
+
         #region File Browser Internal Classes
 
         public class FileBrowserEntry

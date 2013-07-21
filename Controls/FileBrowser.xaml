@@ -85,6 +85,8 @@
                 <ColumnDefinition Width="*"/>       <!-- 6 -->
                 <ColumnDefinition Width="Auto"/>    <!-- 7 -->
                 <ColumnDefinition Width="*"/>       <!-- 8 -->
+                <ColumnDefinition Width="Auto"/>    <!-- 9 -->
+                <ColumnDefinition Width="*"/>       <!-- 10 -->
             </Grid.ColumnDefinitions>
 
             <!-- TODO: add icons for these buttons -->
@@ -94,20 +96,27 @@
                     Content="Cancel"
                     Click="CancelButton_Click"/>
             
-            <Button x:Name="DeleteButton"
+            <Button x:Name="SyncButton"
                     Grid.Column="3"
+                    Click="SyncButton_Click">
+                <Image Source="/Assets/Icons/skydrive.png"
+                       Width="50"/>
+            </Button>
+            
+            <Button x:Name="DeleteButton"
+                    Grid.Column="5"
                     Content="Delete"
                     IsEnabled="False"
                     Click="DeleteButton_Click"/>
 
             <Button x:Name="NewFolderButton"
-                    Grid.Column="5"
+                    Grid.Column="7"
                     Content="New Folder"
                     IsEnabled="False"
                     Click="NewFolderButton_Click"/>
 
             <local:ImageButton x:Name="SelectButton"
-                               Grid.Column="7"
+                               Grid.Column="9"
                                ImageSource="/Assets/Icons/check.png"
                                Text="{Binding SelectButtonText}"
                                IsEnabled="False"

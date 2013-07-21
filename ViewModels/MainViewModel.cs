@@ -6,6 +6,7 @@ using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Phone.Controls;
 using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
 using Windows.Devices.Geolocation;
@@ -32,6 +33,11 @@ namespace Breadcrumbs.ViewModels
         public FileBrowserViewModel FileBrowserViewModel
         {
             get { return m_fileBrowserViewModel; }
+        }
+
+        public CloudSync CloudSync
+        {
+            get { return m_cloudSync; }
         }
 
         public GPS GPS
@@ -311,6 +317,7 @@ namespace Breadcrumbs.ViewModels
             m_mapViewModel = new MapCompositeViewModel(this);
             m_sidebarViewModel = new MapSidebarViewModel(this);
             m_fileBrowserViewModel = new FileBrowserViewModel(this);
+            m_cloudSync = new CloudSync(this);
             m_isGpsEnabled = false;
             m_gps = new GPS(this);
             m_gpx = new GPX();
@@ -516,6 +523,31 @@ namespace Breadcrumbs.ViewModels
         }
         private static IStorageFolder s_localGpxFolder = null;
 
+        public SupportedPageOrientation SupportedOrientations
+        {
+            get { return m_supportedOrientations; }
+            private set
+            {
+                m_supportedOrientations = value;
+                NotifyPropertyChanged("SupportedOrientations");
+            }
+        }
+        private SupportedPageOrientation m_supportedOrientations = SupportedPageOrientation.Landscape;
+        public void ForcePortraitMode(bool forcedPortrait)
+        {
+            // Some things don't work well in landscape. I'm looking at you, Live auth page. ಠ_ಠ
+            // This is a shitty hack to force orientation back to portrait mode so they work right.
+            // Make sure to set it back to landscape afterwards!
+            if (forcedPortrait)
+            {
+                SupportedOrientations = SupportedPageOrientation.Portrait;
+            }
+            else
+            {
+                SupportedOrientations = SupportedPageOrientation.Landscape;
+            }
+        }
+
         public string GetTrackGPX()
         {
             var gpxData = new MemoryStream();
@@ -534,6 +566,7 @@ namespace Breadcrumbs.ViewModels
         private MapSidebarViewModel m_sidebarViewModel;
         private FileBrowserViewModel m_fileBrowserViewModel;
         private GeocoordinateEx m_currentPosition;
+        private CloudSync m_cloudSync;
 
         // For testing
         private ManualResetEvent m_locationRead;

@@ -151,5 +151,10 @@ namespace Breadcrumbs
                 SelectButton.IsEnabled = true;
             }
         }
+
+        private void SyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CloudSync();
+        }
     }
 }

@@ -130,6 +130,11 @@ namespace Breadcrumbs
             ShowErrorMessage(message, caption);
         }
 
+        public static void ShowError(Exception ex, string caption = "Breadcrumbs")
+        {
+            ShowError(new AggregateException(ex));
+        }
+
         public static void ShowError(AggregateException ex, string caption = "Breadcrumbs")
         {
             string message = string.Empty;
