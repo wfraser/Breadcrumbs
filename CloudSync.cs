@@ -13,6 +13,9 @@ namespace Breadcrumbs
         // Magic number from https://account.live.com/developers/applications/index
         private static readonly string ClientID = "000000004C0FB389";
 
+        // What we name the GPX folder in the user's SkyDrive.
+        private static readonly string GpxFolderName = "Breadcrumbs";
+
         private LiveConnectSession m_session;
 
         private async Task<LiveConnectSession> GetSession()
@@ -55,10 +58,91 @@ namespace Breadcrumbs
             return null;
         }
 
+        private async Task<string> GetGpxFolderId()
+        {
+            LiveConnectSession session = await GetSession();
+            if (session == null)
+            {
+                return null;
+            }
+
+            var client = new LiveConnectClient(session);
+
+            LiveOperationResult r;
+            try
+            {
+                r = await client.GetAsync("me/skydrive/files");
+            }
+            catch (LiveConnectException ex)
+            {
+                Utils.ShowError(ex);
+                return null;
+            }
+
+            var files = r.Result["data"] as IList<object>;
+            if (files == null)
+            {
+                Utils.ShowError("Result from SkyDrive files query is an unknown type.");
+                return null;
+            }
+
+            foreach (var folder in files.OfType<IDictionary<string, object>>())
+            {
+                if (!folder.Keys.Contains("name"))
+                {
+                    Utils.ShowError("A folder returned from SkyDrive has no Name field!");
+                    return null;
+                }
+                else if (string.Equals(folder["name"], GpxFolderName))
+                {
+                    if (!folder.Keys.Contains("id"))
+                    {
+                        Utils.ShowError("GPX folder returned from SkyDrive has no ID field!");
+                        return null;
+                    }
+                    else
+                    {
+                        return folder["id"] as string;
+                    }
+                }
+            }
+
+            // If we get to here, no GPX folder was found. Create one!
+
+            var gpxFolder = new Dictionary<string, object>();
+            gpxFolder.Add("name", GpxFolderName);
+
+            try
+            {
+                r = await client.PostAsync("me/skydrive", gpxFolder);
+            }
+            catch (LiveConnectException ex)
+            {
+                Utils.ShowError(ex);
+                return null;
+            }
+
+            var newFolder = r.Result as IDictionary<string, object>;
+            if (newFolder == null)
+            {
+                Utils.ShowError("Newly created GPX folder is of unknown type.");
+                return null;
+            }
+            else if (!newFolder.Keys.Contains("id"))
+            {
+                Utils.ShowError("Newly created GPX folder has no ID field!");
+                return null;
+            }
+            else
+            {
+                return newFolder["id"] as string;
+            }
+        }
+
         public async Task<bool> Test()
         {
-            var s = await GetSession();
-            return (s != null);
+            string id = await GetGpxFolderId();
+            return (id != null);
         }
 
         public CloudSync(ViewModels.MainViewModel mainVM)
