@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Live;
 using Microsoft.Live.Controls;
+using Windows.Storage;
 
 namespace Breadcrumbs
 {
@@ -139,10 +140,109 @@ namespace Breadcrumbs
             }
         }
 
-        public async Task<bool> Test()
+        private async Task<IList<IDictionary<string, object>>> CloudTreeEnumerate(string folderId, string prefix = "")
         {
-            string id = await GetGpxFolderId();
-            return (id != null);
+            LiveConnectSession session = await GetSession();
+            if (session == null)
+                return null;
+
+            var client = new LiveConnectClient(session);
+
+            LiveOperationResult r;
+            try
+            {
+                r = await client.GetAsync(folderId + "/files");
+            }
+            catch (LiveConnectException ex)
+            {
+                Utils.ShowError(ex);
+                return null;
+            }
+
+            var children = r.Result["data"] as IList<object>;
+            if (children == null)
+            {
+                Utils.ShowError("Result from SkyDrive files query is an unknown type.");
+                return null;
+            }
+
+            var allItems = new List<IDictionary<string, object>>();
+            foreach (var child in children.OfType<IDictionary<string, object>>())
+            {
+                if (!child.Keys.Contains("name"))
+                {
+                    Utils.ShowError("A folder returned from SkyDrive has no Name field!");
+                    return null;
+                }
+                string name = child["name"] as string;
+
+                if (child.Keys.Contains("type") && string.Equals(child["type"] as string, "folder"))
+                {
+                    if (child.Keys.Contains("id"))
+                    {
+                        string childId = child["id"] as string;
+                        if (folderId != null)
+                        {
+                            allItems.AddRange(await CloudTreeEnumerate(childId, prefix + "/" + name));
+                        }
+                    }
+                }
+                else
+                {
+                    child["name"] = prefix + "/" + child["name"];
+                    allItems.Add(child);
+                }
+            }
+
+            return allItems;
+        }
+
+        private async Task<IEnumerable<IDictionary<string, object>>> GetCloudFiles()
+        {
+            LiveConnectSession session = await GetSession();
+            if (session == null)
+                return null;
+
+            string gpxFolderId = await GetGpxFolderId();
+            if (gpxFolderId == null)
+                return null;
+
+            return await CloudTreeEnumerate(gpxFolderId);
+        }
+
+        private async Task<IEnumerable<IStorageFile>> LocalTreeEnumerate(IStorageFolder folder)
+        {
+            var allFiles = new List<IStorageFile>();
+            foreach (IStorageItem child in await folder.GetItemsAsync())
+            {
+                if (child.IsOfType(StorageItemTypes.Folder))
+                {
+                    allFiles.AddRange(await LocalTreeEnumerate(child as IStorageFolder));
+                }
+                else
+                {
+                    allFiles.Add(child as IStorageFile);
+                }
+            }
+            return allFiles;
+        }
+
+        private async Task<IEnumerable<IStorageFile>> GetLocalFiles()
+        {
+            IStorageFolder localGpxFolder = await m_mainVM.GetLocalGpxFolder();
+            return await LocalTreeEnumerate(localGpxFolder);
+        }
+
+        public async Task<IEnumerable<string>> Test()
+        {
+            var allFiles = new List<string>();
+
+            foreach (var child in await GetCloudFiles())
+            {
+                allFiles.Add(child["name"] as string);
+            }
+
+            return allFiles;
         }
 
         public CloudSync(ViewModels.MainViewModel mainVM)

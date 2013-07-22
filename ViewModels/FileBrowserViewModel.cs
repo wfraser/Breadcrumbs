@@ -366,8 +366,9 @@ namespace Breadcrumbs.ViewModels
             m_mainVM.CloudSync.Test().ContinueWith(prevTask =>
                 App.RootFrame.Dispatcher.BeginInvoke(() =>
                     MessageBox.Show("Sorry, this feature isn't implemented yet.\n"
-                                        + (prevTask.Result ? "But making a folder works!"
-                                                           : "Making a folder failed!"),
+                                        + "But I found these files in your SkyDrive folder:\n\n"
+                                        + ((prevTask.Result.Count() == 0) ? "(none)"
+                                            : prevTask.Result.Aggregate((prev, current) => prev + "\n" + current)),
                                     "SkyDrive Cloud Sync",
                                     MessageBoxButton.OK)));
         }

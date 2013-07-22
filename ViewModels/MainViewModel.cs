@@ -492,7 +492,7 @@ namespace Breadcrumbs.ViewModels
             // TODO: re-draw the track from the newly-loaded GPX file.
         }
 
-        private async Task<IStorageFolder> GetLocalGpxFolder()
+        public async Task<IStorageFolder> GetLocalGpxFolder()
         {
             if (s_localGpxFolder != null)
             {
