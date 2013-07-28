@@ -11,116 +11,143 @@
     d:DesignHeight="480" d:DesignWidth="800"
     Loaded="OnLoaded">
 
-    <Grid x:Name="LayoutRoot"
-            Background="{StaticResource PhoneChromeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Grid x:Name="LayoutRoot">
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <Grid Background="{StaticResource PhoneChromeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <ScrollViewer x:Name="FolderNameScrollViewer"
-                          HorizontalScrollBarVisibility="Auto"
-                          LayoutUpdated="FolderNameScrollViewer_LayoutUpdated">
-                <TextBlock Text="{Binding FolderName, FallbackValue=Folder}"
-                           Style="{StaticResource PhoneTextExtraLargeStyle}"
-                           VerticalAlignment="Center"/>
-            </ScrollViewer>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <local:ImageButton x:Name="UpButton"
-                               Grid.Column="1"
-                               ImageSource="/Assets/Icons/up.png"
-                               ImageWidth="32" ImageHeight="32"
-                               Orientation="Horizontal"
-                               Text="Up"
-                               IsEnabled="{Binding CanGoUp}"
-                               Click="UpButton_Click"/>
+                <ScrollViewer x:Name="FolderNameScrollViewer"
+                              HorizontalScrollBarVisibility="Auto"
+                              LayoutUpdated="FolderNameScrollViewer_LayoutUpdated">
+                    <TextBlock Text="{Binding FolderName, FallbackValue=Folder}"
+                               Style="{StaticResource PhoneTextExtraLargeStyle}"
+                               VerticalAlignment="Center"/>
+                </ScrollViewer>
+
+                <local:ImageButton x:Name="UpButton"
+                                   Grid.Column="1"
+                                   ImageSource="/Assets/Icons/up.png"
+                                   ImageWidth="32" ImageHeight="32"
+                                   Orientation="Horizontal"
+                                   Text="Up"
+                                   IsEnabled="{Binding CanGoUp}"
+                                   Click="UpButton_Click"/>
+            </Grid>
+
+            <ListBox x:Name="ItemList"
+                     Grid.Row="1"
+                     SelectionMode="Single"
+                     ItemsSource="{Binding Items}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                     SelectionChanged="ItemList_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel x:Name="ItemPanel"
+                                    Orientation="Horizontal"
+                                    DoubleTap="SelectItem">
+                            <Image Source="/Assets/Icons/folder.png"
+                                    Width="64" Height="64"
+                                    Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <Image Source="/Assets/Icons/file.png"
+                                    Width="64" Height="64"
+                                    Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
+                            <TextBlock Text="{Binding FileName}"
+                                       VerticalAlignment="Center"
+                                       FontSize="{StaticResource PhoneFontSizeLarge}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <TextBox x:Name="FileNameEntryBox"
+                     Grid.Row="2"
+                     TextChanged="FileNameEntryBox_TextChanged"/>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>   <!-- 0 -->
+                    <ColumnDefinition Width="Auto"/><!-- 1 -->
+                    <ColumnDefinition Width="*"/>   <!-- 2 -->
+                    <ColumnDefinition Width="Auto"/><!-- 3 -->
+                    <ColumnDefinition Width="*"/>   <!-- 4 -->
+                    <ColumnDefinition Width="Auto"/><!-- 5 -->
+                    <ColumnDefinition Width="*"/>   <!-- 6 -->
+                    <ColumnDefinition Width="Auto"/><!-- 7 -->
+                    <ColumnDefinition Width="*"/>   <!-- 8 -->
+                    <ColumnDefinition Width="Auto"/><!-- 9 -->
+                    <ColumnDefinition Width="*"/>   <!-- 10 -->
+                </Grid.ColumnDefinitions>
+
+                <!-- TODO: add icons for these buttons -->
+
+                <Button x:Name="CancelButton"
+                        Grid.Column="1"
+                        Content="Cancel"
+                        Click="CancelButton_Click"/>
+
+                <Button x:Name="SyncButton"
+                        Grid.Column="3"
+                        Click="SyncButton_Click">
+                    <Image Source="/Assets/Icons/skydrive.png"
+                           Width="50"/>
+                </Button>
+
+                <Button x:Name="DeleteButton"
+                        Grid.Column="5"
+                        Content="Delete"
+                        IsEnabled="False"
+                        Click="DeleteButton_Click"/>
+
+                <Button x:Name="NewFolderButton"
+                        Grid.Column="7"
+                        Content="New Folder"
+                        IsEnabled="False"
+                        Click="NewFolderButton_Click"/>
+
+                <local:ImageButton x:Name="SelectButton"
+                                   Grid.Column="9"
+                                   ImageSource="/Assets/Icons/check.png"
+                                   Text="{Binding SelectButtonText}"
+                                   IsEnabled="False"
+                                   Click="SelectItem"/>
+            </Grid>
         </Grid>
 
-        <ListBox x:Name="ItemList"
-                 Grid.Row="1"
-                 SelectionMode="Single"
-                 ItemsSource="{Binding Items}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                 SelectionChanged="ItemList_SelectionChanged">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel x:Name="ItemPanel"
-                                Orientation="Horizontal"
-                                DoubleTap="SelectItem">
-                        <Image Source="/Assets/Icons/folder.png"
-                                Width="64" Height="64"
-                                Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                        <Image Source="/Assets/Icons/file.png"
-                                Width="64" Height="64"
-                                Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
-                        <TextBlock Text="{Binding FileName}"
-                                   VerticalAlignment="Center"
-                                   FontSize="{StaticResource PhoneFontSizeLarge}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <Grid Visibility="{Binding SyncBusyScreenVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+              Background="{StaticResource PhoneChromeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <TextBox x:Name="FileNameEntryBox"
-                 Grid.Row="2"
-                 TextChanged="FileNameEntryBox_TextChanged"/>
-
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>       <!-- 0 -->
-                <ColumnDefinition Width="Auto"/>    <!-- 1 -->
-                <ColumnDefinition Width="*"/>       <!-- 2 -->
-                <ColumnDefinition Width="Auto"/>    <!-- 3 -->
-                <ColumnDefinition Width="*"/>       <!-- 4 -->
-                <ColumnDefinition Width="Auto"/>    <!-- 5 -->
-                <ColumnDefinition Width="*"/>       <!-- 6 -->
-                <ColumnDefinition Width="Auto"/>    <!-- 7 -->
-                <ColumnDefinition Width="*"/>       <!-- 8 -->
-                <ColumnDefinition Width="Auto"/>    <!-- 9 -->
-                <ColumnDefinition Width="*"/>       <!-- 10 -->
-            </Grid.ColumnDefinitions>
-
-            <!-- TODO: add icons for these buttons -->
-
-            <Button x:Name="CancelButton"
-                    Grid.Column="1"
-                    Content="Cancel"
-                    Click="CancelButton_Click"/>
-            
-            <Button x:Name="SyncButton"
-                    Grid.Column="3"
-                    Click="SyncButton_Click">
-                <Image Source="/Assets/Icons/skydrive.png"
-                       Width="50"/>
-            </Button>
-            
-            <Button x:Name="DeleteButton"
-                    Grid.Column="5"
-                    Content="Delete"
-                    IsEnabled="False"
-                    Click="DeleteButton_Click"/>
-
-            <Button x:Name="NewFolderButton"
-                    Grid.Column="7"
-                    Content="New Folder"
-                    IsEnabled="False"
-                    Click="NewFolderButton_Click"/>
-
-            <local:ImageButton x:Name="SelectButton"
-                               Grid.Column="9"
-                               ImageSource="/Assets/Icons/check.png"
-                               Text="{Binding SelectButtonText}"
-                               IsEnabled="False"
-                               Click="SelectItem"/>
+            <StackPanel Orientation="Vertical" Grid.Row="1">
+                <TextBlock Style="{StaticResource PhoneTextExtraLargeStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="0"
+                           Text="Syncing with SkyDrive..."/>
+                <ProgressBar IsIndeterminate="{Binding SyncProgressIsIndeterminate}"
+                             Value="{Binding SyncProgressValue}"
+                             Minimum="0" Maximum="1"
+                             Margin="0,20,0,20"/>
+                <TextBlock Style="{StaticResource PhoneTextLargeStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="0"
+                           Text="{Binding SyncProgressDetail}"/>
+            </StackPanel>
         </Grid>
+
     </Grid>
 </UserControl>

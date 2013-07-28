@@ -361,16 +361,99 @@ namespace Breadcrumbs.ViewModels
                 });
         }
 
+        public bool SyncBusyScreenVisible
+        {
+            get { return m_syncBusyScreenVisible; }
+            set
+            {
+                m_syncBusyScreenVisible = value;
+                NotifyPropertyChanged("SyncBusyScreenVisible");
+            }
+        }
+        private bool m_syncBusyScreenVisible;
+
+        public string SyncProgressDetail
+        {
+            get { return m_syncProgressDetail; }
+            set
+            {
+                m_syncProgressDetail = value;
+                NotifyPropertyChanged("SyncProgressDetail");
+            }
+        }
+        private string m_syncProgressDetail;
+
+        public bool SyncProgressIsIndeterminate
+        {
+            get { return (m_syncProgressValue < 0); }
+        }
+
+        public double SyncProgressValue
+        {
+            get
+            {
+                if (m_syncProgressValue < 0)
+                    return 0.0;
+                else
+                    return m_syncProgressValue;
+            }
+            set
+            {
+                m_syncProgressValue = value;
+                NotifyPropertyChanged("SyncProgressIsIndeterminate");
+                NotifyPropertyChanged("SyncProgressValue");
+            }
+        }
+        private double m_syncProgressValue;
+
         public void CloudSync()
         {
-            m_mainVM.CloudSync.Test().ContinueWith(prevTask =>
-                App.RootFrame.Dispatcher.BeginInvoke(() =>
-                    MessageBox.Show("Sorry, this feature isn't implemented yet.\n"
-                                        + "But I found these files in your SkyDrive folder:\n\n"
-                                        + ((prevTask.Result.Count() == 0) ? "(none)"
-                                            : prevTask.Result.Aggregate((prev, current) => prev + "\n" + current)),
-                                    "SkyDrive Cloud Sync",
-                                    MessageBoxButton.OK)));
+            SyncProgressValue = -1;
+            SyncBusyScreenVisible = true;
+
+            // The browser window LoginAsync opens is forced into portrait, but the keyboard is
+            // stuck in landscape mode, and it looks completely stupid.
+            // So, we have to force portrait mode for the duration of the auth procedure.
+            m_mainVM.ForcePortraitMode(true);
+
+            Breadcrumbs.CloudSync.Authenticate()
+                .ContinueWith(authTask =>
+                    {
+                        m_mainVM.ForcePortraitMode(false);
+
+                        if (authTask.Result != null)
+                        {
+                            Action<double, string> progressUpdate =
+                                (progress, detail) =>
+                                {
+                                    SyncProgressValue = progress;
+                                    SyncProgressDetail = detail;
+                                };
+
+                            try
+                            {
+                                CloudSync.Summary result = m_mainVM.CloudSync.Synchronize(progressUpdate).Result;
+                                App.RootFrame.Dispatcher.BeginInvoke(() =>
+                                MessageBox.Show(
+                                    string.Format("Synchronization Complete.\n\n"
+                                        + "{0} downloaded\n"
+                                        + "{1} uploaded\n"
+                                        + "{2} up to date\n"
+                                        + "{3} deleted locally\n"
+                                        + "{4} deleted from SkyDrive",
+                                        result.Downloaded, result.Uploaded, result.UpToDate, result.DeletedLocal, result.DeletedCloud),
+                                    "Breadcrumbs Cloud Sync",
+                                    MessageBoxButton.OK));
+                            }
+                            catch (Exception ex)
+                            {
+                                Utils.ShowError(ex);
+                            }
+                            
+                            NotifyPropertyChanged("Items");
+                            SyncBusyScreenVisible = false;
+                        }
+                    });
         }
 
         #region File Browser Internal Classes

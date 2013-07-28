@@ -95,6 +95,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BooleanToVisibilityConverter.cs" />
+    <Compile Include="CloudFileMap.cs" />
     <Compile Include="CloudSync.cs" />
     <Compile Include="Controls\FileBrowser.xaml.cs">
       <DependentUpon>FileBrowser.xaml</DependentUpon>
@@ -104,6 +105,7 @@
     </Compile>
     <Compile Include="DebugValueConverter.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="FileExtensions.cs" />
     <Compile Include="GeocoordinateEx.cs" />
     <Compile Include="GPS.cs" />
     <Compile Include="GPX.cs" />

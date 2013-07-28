@@ -37,7 +37,7 @@ namespace Breadcrumbs.ViewModels
 
         public CloudSync CloudSync
         {
-            get { return m_cloudSync; }
+            get { return m_cloudSync.Value; }
         }
 
         public GPS GPS
@@ -317,7 +317,7 @@ namespace Breadcrumbs.ViewModels
             m_mapViewModel = new MapCompositeViewModel(this);
             m_sidebarViewModel = new MapSidebarViewModel(this);
             m_fileBrowserViewModel = new FileBrowserViewModel(this);
-            m_cloudSync = new CloudSync(this);
+            m_cloudSync = new Lazy<CloudSync>(() => new Breadcrumbs.CloudSync(this));
             m_isGpsEnabled = false;
             m_gps = new GPS(this);
             m_gpx = new GPX();
@@ -566,7 +566,7 @@ namespace Breadcrumbs.ViewModels
         private MapSidebarViewModel m_sidebarViewModel;
         private FileBrowserViewModel m_fileBrowserViewModel;
         private GeocoordinateEx m_currentPosition;
-        private CloudSync m_cloudSync;
+        private Lazy<CloudSync> m_cloudSync;
 
         // For testing
         private ManualResetEvent m_locationRead;

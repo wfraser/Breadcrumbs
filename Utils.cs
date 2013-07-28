@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Device.Location;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Phone.Maps.Controls;
 using Windows.Devices.Geolocation;
@@ -160,6 +163,114 @@ namespace Breadcrumbs
             Debugger.Break();
             App.RootFrame.Dispatcher.BeginInvoke(() =>
                 MessageBox.Show(message, caption, System.Windows.MessageBoxButton.OK));
+        }
+
+        public static async Task LockStepAsync<T>(
+            IEnumerable<T> list1, IEnumerable<T> list2,
+            Func<T, IComparable> orderBy,
+            Func<T, T, double, Task> action,
+            bool runInOrder = true)
+        {
+            var tasks = new List<Task>();
+
+            List<T> lA = list1.OrderBy(orderBy).ToList();
+            List<T> lB = list2.OrderBy(orderBy).ToList();
+
+            int a = 0;
+            int b = 0;
+            while (a < lA.Count || b < lB.Count)
+            {
+                double progress = (double)(a + b) / (lA.Count + lB.Count);
+
+                if (a == lA.Count)
+                {
+                    // Ran out of entries in lA; run action on the rest of lB
+                    Task t = action(default(T), lB[b], progress);
+                    if (runInOrder)
+                        await t;
+                    else
+                        tasks.Add(t);
+                    b++;
+                }
+                else if (b == lB.Count)
+                {
+                    // Ran out of entries in lB; run action on the rest of lA
+                    Task t = action(lA[a], default(T), progress);
+                    if (runInOrder)
+                        await t;
+                    else
+                        tasks.Add(t);
+                    a++;
+                }
+                else
+                {
+                    T entryA = lA[a];
+                    T entryB = lB[b];
+
+                    int compareResult = orderBy(entryA).CompareTo(orderBy(entryB));
+                    if (compareResult == 0)
+                    {
+                        Task t = action(entryA, entryB, progress);
+                        if (runInOrder)
+                            await t;
+                        else
+                            tasks.Add(t);
+                        a++;
+                        b++;
+                    }
+                    else if (compareResult < 0)
+                    {
+                        // Entry A comes first.
+                        Task t = action(entryA, default(T), progress);
+                        if (runInOrder)
+                            await t;
+                        else
+                            tasks.Add(t);
+                        a++;
+                    }
+                    else if (compareResult > 0)
+                    {
+                        // Entry B comes first.
+                        Task t = action(default(T), entryB, progress);
+                        if (runInOrder)
+                            await t;
+                        else
+                            tasks.Add(t);
+                        b++;
+                    }
+                }
+            }
+
+            await Task.WhenAll(tasks);
+        }
+
+        public static async void LockStepAsync<T>(
+            IEnumerable<T> listA, IEnumerable<T> listB,
+            Func<T, IComparable> orderBy,
+            Func<T, T, Task> action,
+            bool runInorder = true)
+        {
+            await LockStepAsync(listA, listB, orderBy, (a, b, progress) => action(a, b), runInorder);
+        }
+
+        public static void LockStep<T>(
+            IEnumerable<T> listA, IEnumerable<T> listB,
+            Func<T, IComparable> orderBy,
+            Action<T, T, double> action)
+        {
+            Task.Run(
+                async () => await LockStepAsync(listA, listB, orderBy,
+                    (a, b, progress) => Task.Run(() => action(a, b, progress)),
+                    runInOrder: true))
+                .Wait();
+        }
+
+        public static void LockStep<T>(
+            IEnumerable<T> listA, IEnumerable<T> listB,
+            Func<T, IComparable> orderBy,
+            Action<T, T> action)
+        {
+            LockStep(listA, listB, orderBy, (a, b, progress) => action(a, b));
         }
     }
 }
