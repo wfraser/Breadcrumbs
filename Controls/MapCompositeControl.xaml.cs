@@ -63,7 +63,6 @@ namespace Breadcrumbs
             m_viewModel = (ViewModels.MapCompositeViewModel)DataContext;
 
             m_viewModel.MainVM.PropertyChanged += MainVM_PropertyChanged;
-            m_viewModel.MainVM.TrackCleared += MainVM_TrackCleared;
 
             if (m_mapLoaded)
                 m_viewModel.OverlayText = string.Empty;
@@ -86,13 +85,12 @@ namespace Breadcrumbs
             });
         }
 
-        void MainVM_TrackCleared(object sender, EventArgs e)
+        void ClearTrack()
         {
             while (MapControl.MapElements.Count > 1) // Leave the current position circle.
             {
                 MapControl.MapElements.RemoveAt(0);
             }
-            AddTrack();
         }
 
         void MainVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -101,28 +99,30 @@ namespace Breadcrumbs
             switch (e.PropertyName)
             {
                 case "CurrentGeoCoordinate":
-                    GeoCoordinate center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
-                    CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
-
-                    if (m_viewModel.MainVM.IsTrackingEnabled)
                     {
-                        // The current position circle is always last.
-                        System.Diagnostics.Debug.Assert(MapControl.MapElements.Count > 1);
-                        MapPolyline segment = (MapControl.MapElements[MapControl.MapElements.Count - 2] as MapPolyline);
-                        if (segment != null)
-                        {
-                            segment.Path.Add(center);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                    }
+                        GeoCoordinate center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
+                        CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
 
-                    if (m_viewModel.CenterOnCurrentPosition)
-                    {
-                        m_centerChangedByCode = true;
-                        MapControl.Center = center;
+                        if (m_viewModel.MainVM.IsTrackingEnabled)
+                        {
+                            // The current position circle is always last.
+                            System.Diagnostics.Debug.Assert(MapControl.MapElements.Count > 1);
+                            MapPolyline segment = (MapControl.MapElements[MapControl.MapElements.Count - 2] as MapPolyline);
+                            if (segment != null)
+                            {
+                                segment.Path.Add(center);
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.Assert(false);
+                            }
+                        }
+
+                        if (m_viewModel.CenterOnCurrentPosition)
+                        {
+                            m_centerChangedByCode = true;
+                            MapControl.Center = center;
+                        }
                     }
                     break;
 
@@ -132,6 +132,25 @@ namespace Breadcrumbs
                         // Tracking disabled; create a new track line layer.
                         AddTrack();
                     }
+                    break;
+
+                case "GPX":
+                    // Remove all the map elements except the last one (which is the current position circle).
+                    ClearTrack();
+
+                    for (int t = m_viewModel.MainVM.GPX.Tracks.Count - 1; t >= 0; t--)
+                    {
+                        GPX.Track track = m_viewModel.MainVM.GPX.Tracks[t];
+                        for (int s = track.Segments.Count - 1; s >= 0; s--)
+                        {
+                            GPX.TrackSegment segment = track.Segments[s];
+                            AddTrack(segment.Points.Select(point => Utils.ConvertGeocoordinate(point.GeocoordinateEx)));
+                        }
+                    }
+
+                    // Add a new empty track, for subsequent points.
+                    AddTrack();
+
                     break;
             }
         }
@@ -216,14 +235,26 @@ namespace Breadcrumbs
             AddTrack();
         }
 
-        private void AddTrack()
+        private MapPolyline AddTrack(IEnumerable<GeoCoordinate> points = null)
         {
             var line = new MapPolyline();
             line.StrokeColor = Colors.Red;
             line.StrokeThickness = 5.0;
 
+            if (points != null)
+            {
+                var path = new GeoCoordinateCollection();
+                foreach (GeoCoordinate point in points)
+                {
+                    path.Add(point);
+                }
+                line.Path = path;
+            }
+
             // Insert the new track segment right behind the current position circle, which is last.
             MapControl.MapElements.Insert(MapControl.MapElements.Count - 1, line);
+
+            return line;
         }
 
         bool m_centerChangedByCode;
