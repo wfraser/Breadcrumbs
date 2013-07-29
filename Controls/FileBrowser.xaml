@@ -133,20 +133,24 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Vertical" Grid.Row="1">
-                <TextBlock Style="{StaticResource PhoneTextExtraLargeStyle}"
-                           HorizontalAlignment="Center"
-                           Margin="0"
-                           Text="Syncing with SkyDrive..."/>
-                <ProgressBar IsIndeterminate="{Binding SyncProgressIsIndeterminate}"
-                             Value="{Binding SyncProgressValue}"
-                             Minimum="0" Maximum="1"
-                             Margin="0,20,0,20"/>
-                <TextBlock Style="{StaticResource PhoneTextLargeStyle}"
-                           HorizontalAlignment="Center"
-                           Margin="0"
-                           Text="{Binding SyncProgressDetail}"/>
-            </StackPanel>
+            <TextBlock Style="{StaticResource PhoneTextExtraLargeStyle}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Margin="0"
+                       Text="Syncing with SkyDrive..."/>
+
+            <ProgressBar Grid.Row="1"
+                         IsIndeterminate="{Binding SyncProgressIsIndeterminate}"
+                         Value="{Binding SyncProgressValue}"
+                         Minimum="0" Maximum="1"
+                         Margin="0,20,0,20"/>
+            
+            <TextBlock Grid.Row="2"
+                       Style="{StaticResource PhoneTextLargeStyle}"
+                       HorizontalAlignment="Center"
+                       Margin="0"
+                       TextWrapping="Wrap"
+                       Text="{Binding SyncProgressDetail}"/>
         </Grid>
 
     </Grid>
