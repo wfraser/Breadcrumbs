@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -139,6 +140,21 @@ namespace Breadcrumbs
                         }
                     }));
             thread.Start();
+        }
+
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Version ver = assembly.GetName().Version;
+            string copyright = assembly.GetCustomAttributes<AssemblyCopyrightAttribute>().First().Copyright;
+
+            MessageBox.Show(
+                string.Format("Breadcrumbs v{0}.{1} build {2} rev {3}\n", ver.Major, ver.Minor, ver.Build, ver.Revision)
+                    + copyright
+                    + "\nhttps://github.com/wfraser/Breadcrumbs"
+                    + "\n\n:)",
+                "About Breadcrumbs",
+                MessageBoxButton.OK);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

@@ -124,6 +124,10 @@
                     <Button x:Name="TestButton"
                             Content="Test"
                             Click="TestButton_Click"/>
+                    
+                    <Button x:Name="AboutButton"
+                            Content="About"
+                            Click="AboutButton_Click"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>
