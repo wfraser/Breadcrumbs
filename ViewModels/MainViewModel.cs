@@ -6,6 +6,7 @@ using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
@@ -365,15 +366,20 @@ namespace Breadcrumbs.ViewModels
             IsTrackingEnabled = !IsTrackingEnabled;
         }
 
-        public event EventHandler TrackCleared;
         public void ClearTrack()
         {
-            var handler = TrackCleared;
-            if (handler != null)
+            if (m_gpx.Dirty)
             {
-                handler(this, new EventArgs());
+                MessageBoxResult result = MessageBox.Show(
+                    "You have unsaved track data, which is about to be lost. Continue clearing the track?",
+                    "Confirm",
+                    MessageBoxButton.OKCancel);
+                if (result == MessageBoxResult.Cancel)
+                    return;
             }
+
             m_gpx.ClearTracks();
+            NotifyPropertyChanged("GPX");
         }
 
         public void CycleMapType()
@@ -467,6 +473,17 @@ namespace Breadcrumbs.ViewModels
 
         public async void LoadTrack(string gpxData = null)
         {
+            if (m_gpx.Dirty)
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    "You have unsaved track data, which is about to be lost. Continue loading GPX file?",
+                    "Confirm",
+                    MessageBoxButton.OKCancel);
+
+                if (result == MessageBoxResult.Cancel)
+                    return;
+            }
+
             if (gpxData == null)
             {
                 m_fileBrowserViewModel.StartingFolder = await GetLocalGpxFolder();
@@ -478,6 +495,9 @@ namespace Breadcrumbs.ViewModels
                         if (result != null)
                         {
                             m_gpx = GPX.Deserialize(await result.OpenStreamForReadAsync());
+
+                            // Notify the map that it needs to re-draw.
+                            NotifyPropertyChanged("GPX");
                         }
                     }));
 
@@ -487,9 +507,10 @@ namespace Breadcrumbs.ViewModels
             {
                 var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(gpxData));
                 m_gpx = GPX.Deserialize(stream);
-            }
 
-            // TODO: re-draw the track from the newly-loaded GPX file.
+                // Notify the map that it needs to re-draw.
+                NotifyPropertyChanged("GPX");
+            }
         }
 
         public async Task<IStorageFolder> GetLocalGpxFolder()
