@@ -467,24 +467,23 @@ namespace Breadcrumbs
                         if (mapping == null)
                         {
                             // Filename collision, and we don't have a mapping (i.e. it's a never-before-seen file).
-                            // Rename each file to a name based on its creation time.
+                            // Rename the local file to a name based on its last modified time.
                             FileContainer local2 = await RenameFile(localFile, MakeUniqueFilename(localFile));
-                            FileContainer cloud2 = await RenameFile(cloudFile, MakeUniqueFilename(cloudFile));
 
                             // Copy both files.
                             progressUpdate(progress, "Uploading " + local2.Path);
                             FileContainer local2Copy = await CopyFile(local2);
-                            progressUpdate(progress, "Downloading " + cloud2.Path);
-                            FileContainer cloud2Copy = await CopyFile(cloud2);
+                            progressUpdate(progress, "Downloading " + cloudFile.Path);
+                            FileContainer cloudCopy = await CopyFile(cloudFile);
 
                             uploaded++;
                             downloaded++;
 
                             await fileMap.AddMapping(local2.Path, local2.MTime, local2Copy.SkyDriveId, local2Copy.MTime);
-                            await fileMap.AddMapping(cloud2.Path, cloud2Copy.MTime, cloud2.SkyDriveId, cloud2.MTime);
+                            await fileMap.AddMapping(cloudFile.Path, cloudCopy.MTime, cloudFile.SkyDriveId, cloudFile.MTime);
 
                             pathsSeen.Add(local2.Path);
-                            pathsSeen.Add(cloud2.Path);
+                            pathsSeen.Add(cloudFile.Path);
                         }
                         else if (localFile.MTime != mapping.LocalModifiedTime || cloudFile.MTime != mapping.SkyDriveModifiedTime)
                         {
