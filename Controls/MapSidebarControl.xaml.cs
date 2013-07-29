@@ -93,11 +93,13 @@ namespace Breadcrumbs
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
+            m_viewModel.IsExpanded = false;
             m_viewModel.MainVM.SaveTrack();
         }
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
+            m_viewModel.IsExpanded = false;
             m_viewModel.MainVM.LoadTrack();
         }
 
