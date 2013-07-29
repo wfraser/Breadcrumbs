@@ -183,9 +183,34 @@ namespace Breadcrumbs
                         try
                         {
                             LiveOperationResult result;
+
+                            string folderId = await GetGpxFolderId();
+                            string[] pathComponents = dest.Path.Substring(1).Split('/');
+                            foreach (string pathComponent in pathComponents.Take(pathComponents.Length - 1))
+                            {
+                                result = await s_liveClient.GetAsync(folderId + "/files?filter=folders");
+
+                                var subFolders = result.Result["data"] as IEnumerable<object>;
+                                IDictionary<string, object> subfolder = subFolders.OfType<IDictionary<string, object>>()
+                                    .SingleOrDefault(item => (item["name"] as string).Equals(pathComponent, StringComparison.OrdinalIgnoreCase));
+
+                                if (subfolder == null)
+                                {
+                                    // Create it
+                                    var props = new Dictionary<string, object> { { "name", pathComponent } };
+                                    result = await s_liveClient.PostAsync(folderId, props);
+                                    folderId = result.Result["id"] as string;
+                                }
+                                else
+                                {
+                                    // TODO: these should be saved in a shared cache somewhere, so that we only have to discover paths once.
+                                    folderId = subfolder["id"] as string;
+                                }
+                            }
+
                             using (Stream s = await src.StorageFile.OpenStreamForReadAsync())
                             {
-                                result = await s_liveClient.UploadAsync(await GetGpxFolderId(), dest.Path.Substring(1), s, OverwriteOption.Overwrite);
+                                result = await s_liveClient.UploadAsync(folderId, Path.GetFileName(dest.Path), s, OverwriteOption.Overwrite);
                             }
 
                             // The result only contains the ID; no other file metadata. Do another GET to get the rest.
