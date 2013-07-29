@@ -90,6 +90,7 @@ namespace Breadcrumbs
             using (Stream s = await m_backingFile.OpenStreamForWriteAsync())
             {
                 Serialize(s, this);
+                s.SetLength(s.Position);
             }
         }
 
