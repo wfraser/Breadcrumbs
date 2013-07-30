@@ -95,7 +95,8 @@
                 Grid.Column="1"
                 Background="{StaticResource PhoneChromeBrush}"
                 Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ScrollViewer>
+            <ScrollViewer x:Name="ExpandedScrollViewer"
+                          LostFocus="ExpandedScrollViewer_LostFocus">
                 <StackPanel>
                     <Button x:Name="MapToggle"
                             Content="Map Type"

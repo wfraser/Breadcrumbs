@@ -2,11 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Windows.Storage;
 
 namespace Breadcrumbs
 {
-    public static class FileExtensions
+    public static class ExtensionMethods
     {
         public static async Task<IStorageFile> CreatePathAsync(this IStorageFolder folder, string path, CreationCollisionOption collisionOption)
         {
@@ -34,6 +35,19 @@ namespace Breadcrumbs
 
             string filename = parts.Last();
             return await currFolder.CreateFileAsync(filename, collisionOption);
+        }
+
+        public static bool HasDescendant(this FrameworkElement parent, FrameworkElement child)
+        {
+            FrameworkElement current = child;
+            do
+            {
+                if (current == parent)
+                    return true;
+                current = current.Parent as FrameworkElement;
+            }
+            while (current != null);
+            return false;
         }
     }
 }

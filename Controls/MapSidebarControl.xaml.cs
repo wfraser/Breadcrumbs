@@ -82,13 +82,24 @@ namespace Breadcrumbs
         {
             if (m_viewModel.IsExpanded)
             {
-                MenuButton.ImageSource = new Uri("/Assets/Icons/next.png", UriKind.Relative);
                 m_viewModel.IsExpanded = false;
             }
             else
             {
-                MenuButton.ImageSource = new Uri("/Assets/Icons/back.png", UriKind.Relative);
                 m_viewModel.IsExpanded = true;
+                ExpandedScrollViewer.Focus();
+            }
+        }
+
+        private void SetMenuButtonState(bool menuIsExpanded)
+        {
+            if (menuIsExpanded)
+            {
+                MenuButton.ImageSource = new Uri("/Assets/Icons/back.png", UriKind.Relative);
+            }
+            else
+            {
+                MenuButton.ImageSource = new Uri("/Assets/Icons/next.png", UriKind.Relative);
             }
         }
 
@@ -160,8 +171,38 @@ namespace Breadcrumbs
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             m_viewModel = (ViewModels.MapSidebarViewModel)DataContext;
+            m_viewModel.PropertyChanged += m_viewModel_PropertyChanged;
+        }
+
+        void m_viewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "IsExpanded":
+                    // This state can be changed in other ways than MenuButton_Click.
+                    SetMenuButtonState(m_viewModel.IsExpanded);
+                    break;
+            }
         }
 
         private ViewModels.MapSidebarViewModel m_viewModel;
+
+        private void ExpandedScrollViewer_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // This is a bit of a hack to get the expanded panel to go away when focus isn't inside it.
+            // The "correct" way to do this would be to set FocusManager.FocusedElement="ExpandedScrollViewer" on all the stuff in it,
+            // and then if this ever gets called, retract the expanded panel.
+            // Silverlight doesn't implement the FocusManager.FocusedElement property, so we have to grab the focused element and
+            // figure out whether it's a descendant of the expanded panel or not...
+
+            FrameworkElement focused = System.Windows.Input.FocusManager.GetFocusedElement() as FrameworkElement;
+            if (focused == null || (!MenuButton.HasDescendant(focused) && !ExpandedScrollViewer.HasDescendant(focused)))
+            {
+                // Note the exclusion of MenuButton above. If focus changed to the Menu button, there's a race condition between this
+                // executing and its Click handler. If this function runs first, it will pop the menu back out again.
+
+                m_viewModel.IsExpanded = false;
+            }
+        }
     }
 }
