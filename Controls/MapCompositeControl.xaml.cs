@@ -138,15 +138,21 @@ namespace Breadcrumbs
                     // Remove all the map elements except the last one (which is the current position circle).
                     ClearTrack();
 
+                    var points = new List<GeoCoordinate>();
+
                     for (int t = m_viewModel.MainVM.GPX.Tracks.Count - 1; t >= 0; t--)
                     {
                         GPX.Track track = m_viewModel.MainVM.GPX.Tracks[t];
                         for (int s = track.Segments.Count - 1; s >= 0; s--)
                         {
                             GPX.TrackSegment segment = track.Segments[s];
-                            AddTrack(segment.Points.Select(point => Utils.ConvertGeocoordinate(point.GeocoordinateEx)));
+                            var segmentPoints = segment.Points.Select(point => Utils.ConvertGeocoordinate(point.GeocoordinateEx));
+                            points.AddRange(segmentPoints);
+                            AddTrack(segmentPoints);
                         }
                     }
+
+                    MapControl.SetView(LocationRectangle.CreateBoundingRectangle(points), new Thickness(25), MapAnimationKind.Parabolic);
 
                     // Add a new empty track, for subsequent points.
                     AddTrack();
