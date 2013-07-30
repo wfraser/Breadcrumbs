@@ -15,6 +15,7 @@ namespace Breadcrumbs
         public FileBrowser()
         {
             InitializeComponent();
+            ItemList.Focus();
         }
 
         private ViewModels.FileBrowserViewModel ViewModel
@@ -26,6 +27,18 @@ namespace Breadcrumbs
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             m_viewModel = (ViewModels.FileBrowserViewModel)DataContext;
+            m_viewModel.PropertyChanged += m_viewModel_PropertyChanged;
+        }
+
+        void m_viewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Items":
+                    // Prevent the text entry from focusing now and popping the OSK. (Because otherwise it would.)
+                    ItemList.Focus();
+                    break;
+            }
         }
 
         private void SelectItem(object sender, RoutedEventArgs e)
