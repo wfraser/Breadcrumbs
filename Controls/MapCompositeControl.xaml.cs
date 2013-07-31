@@ -152,7 +152,10 @@ namespace Breadcrumbs
                         }
                     }
 
-                    MapControl.SetView(LocationRectangle.CreateBoundingRectangle(points), new Thickness(25), MapAnimationKind.Parabolic);
+                    if (points.Count != 0)
+                    {
+                        MapControl.SetView(LocationRectangle.CreateBoundingRectangle(points), new Thickness(25), MapAnimationKind.Parabolic);
+                    }
 
                     // Add a new empty track, for subsequent points.
                     AddTrack();
