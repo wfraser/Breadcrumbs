@@ -52,7 +52,7 @@ namespace Breadcrumbs
                 if (m_oldCenterOnCurrentPosition.Value && m_viewModel.MainVM.CurrentPosition != null)
                 {
                     // Need to re-center the map.
-                    MapControl.Center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
+                    MapControl.Center = m_viewModel.MainVM.CurrentPosition.GeoCoordinate;
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace Breadcrumbs
             {
                 case "CurrentGeoCoordinate":
                     {
-                        GeoCoordinate center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
+                        GeoCoordinate center = m_viewModel.MainVM.CurrentPosition.GeoCoordinate;
                         CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
 
                         if (m_viewModel.MainVM.IsTrackingEnabled)
@@ -146,7 +146,7 @@ namespace Breadcrumbs
                         for (int s = track.Segments.Count - 1; s >= 0; s--)
                         {
                             GPX.TrackSegment segment = track.Segments[s];
-                            var segmentPoints = segment.Points.Select(point => Utils.ConvertGeocoordinate(point.GeocoordinateEx));
+                            var segmentPoints = segment.Points.Select(point => point.GeocoordinateEx.GeoCoordinate);
                             points.AddRange(segmentPoints);
                             AddTrack(segmentPoints);
                         }
@@ -218,7 +218,7 @@ namespace Breadcrumbs
         private void RecenterButton_Click(object sender, RoutedEventArgs e)
         {
             m_centerChangedByCode = true;
-            MapControl.Center = Utils.ConvertGeocoordinate(m_viewModel.MainVM.CurrentPosition);
+            MapControl.Center = m_viewModel.MainVM.CurrentPosition.GeoCoordinate;
             m_viewModel.CenterOnCurrentPosition = true;
         }
 

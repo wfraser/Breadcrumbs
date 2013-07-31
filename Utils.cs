@@ -28,36 +28,6 @@ namespace Breadcrumbs
                 Math.Floor(tenths));
         }
 
-        public static GeoCoordinate ConvertGeocoordinate(Geocoordinate coord)
-        {
-            if (coord == null)
-                return null;
-
-            return new GeoCoordinate(
-                coord.Latitude,
-                coord.Longitude,
-                coord.Altitude ?? double.NaN,
-                coord.Accuracy,
-                coord.AltitudeAccuracy ?? double.NaN,
-                coord.Speed ?? double.NaN,
-                coord.Heading ?? double.NaN);
-        }
-
-        public static GeoCoordinate ConvertGeocoordinate(GeocoordinateEx coord)
-        {
-            if (coord == null)
-                return null;
-
-            return new GeoCoordinate(
-                coord.Latitude,
-                coord.Longitude,
-                coord.Altitude ?? double.NaN,
-                coord.Accuracy,
-                coord.AltitudeAccuracy ?? double.NaN,
-                coord.Speed ?? double.NaN,
-                coord.Heading ?? double.NaN);
-        }
-
         public static double ToRadians(double degrees)
         {
             return degrees * (Math.PI / 180.0);

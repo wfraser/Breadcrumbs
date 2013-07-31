@@ -79,6 +79,21 @@ namespace Breadcrumbs
             set { m_timestamp = value; }
         }
 
+        public System.Device.Location.GeoCoordinate GeoCoordinate
+        {
+            get
+            {
+                return new System.Device.Location.GeoCoordinate(
+                    Latitude,
+                    Longitude,
+                    Altitude ?? double.NaN,
+                    Accuracy,
+                    AltitudeAccuracy ?? double.NaN,
+                    Speed ?? double.NaN,
+                    Heading ?? double.NaN);
+            }
+        }
+
         public GeocoordinateEx(Geocoordinate real)
         {
             if (real == null)
