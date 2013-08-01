@@ -162,7 +162,13 @@ namespace Breadcrumbs
             string copyright = assembly.GetCustomAttributes<AssemblyCopyrightAttribute>().First().Copyright;
 
             MessageBox.Show(
-                string.Format("Breadcrumbs v{0}.{1} build {2} rev {3}\n", ver.Major, ver.Minor, ver.Build, ver.Revision)
+                string.Format("Breadcrumbs v{0}.{1} build {2}{4} rev {3}\n", ver.Major, ver.Minor, ver.Build, ver.Revision,
+#if DEBUG
+                    "d"
+#else
+                    "R"
+#endif
+                    )
                     + copyright
                     + "\nhttps://github.com/wfraser/Breadcrumbs"
                     + "\n\n:)",
