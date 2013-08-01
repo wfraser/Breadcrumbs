@@ -162,7 +162,6 @@ namespace Breadcrumbs
 
         private void SaveSettings()
         {
-            
             IsolatedStorageSettings.ApplicationSettings["CoordinateMode"] = ViewModel.CoordinateMode;
             IsolatedStorageSettings.ApplicationSettings["UnitMode"]       = ViewModel.UnitMode;
             IsolatedStorageSettings.ApplicationSettings["Track"]          = ViewModel.GetTrackGPX();

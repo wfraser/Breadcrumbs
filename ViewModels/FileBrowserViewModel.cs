@@ -449,10 +449,15 @@ namespace Breadcrumbs.ViewModels
                             {
                                 Utils.ShowError(ex);
                             }
-                            
+
                             NotifyPropertyChanged("Items");
-                            SyncBusyScreenVisible = false;
                         }
+                        else
+                        {
+                            App.RootFrame.Dispatcher.BeginInvoke(() => MessageBox.Show("Sync cancelled."));
+                        }
+
+                        SyncBusyScreenVisible = false;
                     });
         }
 

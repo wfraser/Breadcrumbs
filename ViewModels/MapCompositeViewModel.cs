@@ -53,45 +53,55 @@ namespace Breadcrumbs.ViewModels
         {
             m_mainVM = mainVM;
             m_overlayText = "Loading...";
+            m_haveInitialPosition = false;
             m_centerOnCurrentPosition = true;
+
+            m_mainVM.PropertyChanged += m_mainVM_PropertyChanged;
         }
 
-        public async Task<GeocoordinateEx> GetCurrentLocation()
+        private bool m_haveInitialPosition;
+
+        void m_mainVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CurrentPosition" && !m_haveInitialPosition)
+            {
+                m_haveInitialPosition = true;
+                OverlayText = string.Empty;
+            }
+        }
+
+        public async void GetInitialLocation()
         {
             if (true != (bool)System.IO.IsolatedStorage.IsolatedStorageSettings.ApplicationSettings["LocationConsent"])
             {
                 // User has opted out of location.
-                return null;
+                return;
             }
 
             var geo = new Geolocator();
             geo.DesiredAccuracyInMeters = 50;
 
+            OverlayText = "Finding your location...";
+
             try
             {
-                OverlayText = "Finding your location...";
                 Geoposition position = await geo.GetGeopositionAsync(
                     maximumAge: TimeSpan.FromMinutes(5),
                     timeout: TimeSpan.FromSeconds(10));
 
-                return new GeocoordinateEx(position.Coordinate);
+                m_mainVM.CurrentPosition = new GeocoordinateEx(position.Coordinate);
             }
             catch (Exception ex)
             {
                 if ((uint)ex.HResult == 0x80004004)
                 {
                     // Location disabled
-                    return null;
                 }
                 else
                 {
                     // Something else went wrong!
-                    return null;
+                    System.Diagnostics.Debugger.Break();
                 }
-            }
-            finally
-            {
-                OverlayText = string.Empty;
             }
         }
     }

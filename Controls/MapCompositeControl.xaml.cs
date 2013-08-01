@@ -24,6 +24,7 @@ namespace Breadcrumbs
             InitializeComponent();
             m_mapLoaded = false;
             m_centerChangedByCode = false;
+            m_haveInitialPosition = false;
 
             // Handle the lock screen coming up, a phone call being received, etc.
             App.RootFrame.Obscured += RootFrame_Obscured;
@@ -67,22 +68,9 @@ namespace Breadcrumbs
             if (m_mapLoaded)
                 m_viewModel.OverlayText = string.Empty;
 
-            m_viewModel.GetCurrentLocation().ContinueWith(x =>
-            {
-                GeocoordinateEx coordinate = x.Result;
-                if (coordinate == null)
-                {
-                    // Leave it at its default. (or set to (47.622344,-122.325865)?)
-                }
-                else
-                {
-                    m_viewModel.MainVM.CurrentPosition = coordinate;
-                    MapControl.Dispatcher.BeginInvoke(() =>
-                        {
-                            MapControl.ZoomLevel = 15;
-                        });
-                }
-            });
+            m_viewModel.GetInitialLocation();
+
+            GPX_Changed();
         }
 
         void ClearTrack()
@@ -122,6 +110,16 @@ namespace Breadcrumbs
                         {
                             m_centerChangedByCode = true;
                             MapControl.Center = center;
+
+                            if (!m_haveInitialPosition)
+                            {
+                                MapControl.ZoomLevel = 15;
+                            }
+                        }
+
+                        if (!m_haveInitialPosition)
+                        {
+                            m_haveInitialPosition = true;
                         }
                     }
                     break;
@@ -135,33 +133,38 @@ namespace Breadcrumbs
                     break;
 
                 case "GPX":
-                    // Remove all the map elements except the last one (which is the current position circle).
-                    ClearTrack();
-
-                    var points = new List<GeoCoordinate>();
-
-                    for (int t = m_viewModel.MainVM.GPX.Tracks.Count - 1; t >= 0; t--)
-                    {
-                        GPX.Track track = m_viewModel.MainVM.GPX.Tracks[t];
-                        for (int s = track.Segments.Count - 1; s >= 0; s--)
-                        {
-                            GPX.TrackSegment segment = track.Segments[s];
-                            var segmentPoints = segment.Points.Select(point => point.GeocoordinateEx.GeoCoordinate);
-                            points.AddRange(segmentPoints);
-                            AddTrack(segmentPoints);
-                        }
-                    }
-
-                    if (points.Count != 0)
-                    {
-                        MapControl.SetView(LocationRectangle.CreateBoundingRectangle(points), new Thickness(25), MapAnimationKind.Parabolic);
-                    }
-
-                    // Add a new empty track, for subsequent points.
-                    AddTrack();
-
+                    GPX_Changed();
                     break;
             }
+        }
+
+        private void GPX_Changed()
+        {
+            // Remove all the map elements except the last one (which is the current position circle).
+            ClearTrack();
+
+            var points = new List<GeoCoordinate>();
+
+            for (int t = m_viewModel.MainVM.GPX.Tracks.Count - 1; t >= 0; t--)
+            {
+                GPX.Track track = m_viewModel.MainVM.GPX.Tracks[t];
+                for (int s = track.Segments.Count - 1; s >= 0; s--)
+                {
+                    GPX.TrackSegment segment = track.Segments[s];
+                    var segmentPoints = segment.Points.Select(point => point.GeocoordinateEx.GeoCoordinate);
+                    points.AddRange(segmentPoints);
+                    AddTrack(segmentPoints);
+                }
+            }
+
+            if (points.Count != 0)
+            {
+                m_viewModel.CenterOnCurrentPosition = false;
+                MapControl.SetView(LocationRectangle.CreateBoundingRectangle(points), new Thickness(25), MapAnimationKind.Parabolic);
+            }
+
+            // Add a new empty track, for subsequent points.
+            AddTrack();
         }
 
         private void MapControl_CenterChanged(object sender, MapCenterChangedEventArgs e)
@@ -221,7 +224,10 @@ namespace Breadcrumbs
         private void RecenterButton_Click(object sender, RoutedEventArgs e)
         {
             m_centerChangedByCode = true;
-            MapControl.Center = m_viewModel.MainVM.CurrentPosition.GeoCoordinate;
+            if (m_viewModel.MainVM.CurrentPosition != null)
+            {
+                MapControl.Center = m_viewModel.MainVM.CurrentPosition.GeoCoordinate;
+            }
             m_viewModel.CenterOnCurrentPosition = true;
         }
 
@@ -269,5 +275,6 @@ namespace Breadcrumbs
         bool m_centerChangedByCode;
         bool m_mapLoaded;
         private ViewModels.MapCompositeViewModel m_viewModel;
+        private bool m_haveInitialPosition;
     }
 }
