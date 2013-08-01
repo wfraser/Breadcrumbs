@@ -334,9 +334,6 @@ namespace Breadcrumbs.ViewModels
             m_autosaveTimer = new DispatcherTimer();
             m_autosaveTimer.Interval = TimeSpan.FromMinutes(1.0);
             m_autosaveTimer.Tick += new EventHandler((sender, e) => AutosaveGPX());
-
-            // Also save on Obscured, just in case the phone dies before we ever get back.
-            App.RootFrame.Obscured += new EventHandler<ObscuredEventArgs>((sender, e) => AutosaveGPX());
         }
 
         public void AutosaveGPX()
