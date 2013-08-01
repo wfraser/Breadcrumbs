@@ -97,7 +97,7 @@
                 Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ScrollViewer x:Name="ExpandedScrollViewer"
                           LostFocus="ExpandedScrollViewer_LostFocus">
-                <StackPanel>
+                <StackPanel x:Name="ExpandedStackPanel">
                     <Button x:Name="MapToggle"
                             Content="Map Type"
                             Click="MapToggle_Click"/>
@@ -121,10 +121,6 @@
                     <Button x:Name="DMSToggleButton"
                             Content="Coord Mode"
                             Click="DMSToggleButton_Click"/>
-                
-                    <Button x:Name="TestButton"
-                            Content="Test"
-                            Click="TestButton_Click"/>
                     
                     <Button x:Name="AboutButton"
                             Content="About"

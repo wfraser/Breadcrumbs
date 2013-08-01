@@ -125,6 +125,7 @@ namespace Breadcrumbs
             m_viewModel.MainVM.CycleCoordinateMode();
         }
 
+#if DEBUG
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             var thread = new System.Threading.Thread(
@@ -152,6 +153,7 @@ namespace Breadcrumbs
                     }));
             thread.Start();
         }
+#endif
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -172,6 +174,13 @@ namespace Breadcrumbs
         {
             m_viewModel = (ViewModels.MapSidebarViewModel)DataContext;
             m_viewModel.PropertyChanged += m_viewModel_PropertyChanged;
+
+#if DEBUG
+            Button testButton = new Button();
+            testButton.Content = "Test";
+            testButton.Click += TestButton_Click;
+            ExpandedStackPanel.Children.Add(testButton);
+#endif
         }
 
         void m_viewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
