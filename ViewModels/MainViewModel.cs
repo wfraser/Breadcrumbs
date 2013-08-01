@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
@@ -21,6 +22,8 @@ namespace Breadcrumbs.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private static readonly string AutosaveFilename = "autosave.gpx";
+
         public MapCompositeViewModel MapViewModel
         {
             get { return m_mapViewModel; }
@@ -326,6 +329,35 @@ namespace Breadcrumbs.ViewModels
             m_coordMode = CoordinateMode.DMS;
 
             m_locationRead = new ManualResetEvent(false);
+
+            // Set up a timer to auto-save the GPX every 1 minute as long as it's recording.
+            m_autosaveTimer = new DispatcherTimer();
+            m_autosaveTimer.Interval = TimeSpan.FromMinutes(1.0);
+            m_autosaveTimer.Tick += new EventHandler((sender, e) => AutosaveGPX());
+
+            // Also save on Obscured, just in case the phone dies before we ever get back.
+            App.RootFrame.Obscured += new EventHandler<ObscuredEventArgs>((sender, e) => AutosaveGPX());
+        }
+
+        public void AutosaveGPX()
+        {
+            GetLocalGpxFolder()
+                .ContinueWith(async prevTask => 
+                {
+                    try
+                    {
+                        IStorageFolder gpxFolder = prevTask.Result;
+                        IStorageFile autosave = await gpxFolder.CreateFileAsync(MainViewModel.AutosaveFilename, CreationCollisionOption.ReplaceExisting);
+                        using (Stream s = await autosave.OpenStreamForWriteAsync())
+                        {
+                            m_gpx.Serialize(s);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Swallow exceptions. If autosave fails, well, that's just too bad.
+                    }
+                });
         }
 
         public void ToggleGps()
@@ -363,7 +395,17 @@ namespace Breadcrumbs.ViewModels
 
         public void ToggleTracking()
         {
-            IsTrackingEnabled = !IsTrackingEnabled;
+            if (IsTrackingEnabled)
+            {
+                IsTrackingEnabled = false;
+                m_autosaveTimer.Stop();
+                AutosaveGPX();
+            }
+            else
+            {
+                IsTrackingEnabled = true;
+                m_autosaveTimer.Start();
+            }
         }
 
         public void ClearTrack()
@@ -588,6 +630,7 @@ namespace Breadcrumbs.ViewModels
         private FileBrowserViewModel m_fileBrowserViewModel;
         private GeocoordinateEx m_currentPosition;
         private Lazy<CloudSync> m_cloudSync;
+        private DispatcherTimer m_autosaveTimer;
 
         // For testing
         private ManualResetEvent m_locationRead;
