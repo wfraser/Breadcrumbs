@@ -19,6 +19,9 @@ namespace Breadcrumbs
         const double MinZoomLevel = 1.0;
         const double MaxZoomLevel = 20.0;
 
+        private static readonly string MapAppID = "d9aef89d-ed06-4025-8364-04ed8caafa73";
+        private static readonly string MapAuthToken = "B6_Qh0GhyQZDaCtACpThiQ";
+
         public MapCompositeControl()
         {
             InitializeComponent();
@@ -238,6 +241,10 @@ namespace Breadcrumbs
             {
                 m_viewModel.OverlayText = string.Empty;
             }
+
+            // see http://msdn.microsoft.com/library/windowsphone/develop/jj207033(v=vs.105).aspx#BKMK_appidandtoken
+            Microsoft.Phone.Maps.MapsSettings.ApplicationContext.ApplicationId = MapAppID;
+            Microsoft.Phone.Maps.MapsSettings.ApplicationContext.AuthenticationToken = MapAuthToken;
 
             // MapPolyline and MapPolygon don't inherit from UIElement, so specifying x:Name
             // on them does nothing (other than creating the empty variables). We need to manually

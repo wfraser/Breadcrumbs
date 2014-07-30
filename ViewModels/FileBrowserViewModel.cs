@@ -125,11 +125,23 @@ namespace Breadcrumbs.ViewModels
 
                 IEnumerable<IStorageItem> items = m_folder.GetItemsAsync().AsTask().Result;
 
-                return items.Select(item => new FileBrowserEntry()
+                return items.Select(item =>
                     {
-                        IsFolder = item.Attributes.HasFlag(Windows.Storage.FileAttributes.Directory),
-                        FileName = item.Name
+                        try
+                        {
+                            return new FileBrowserEntry()
+                            {
+                                IsFolder = item.Attributes.HasFlag(Windows.Storage.FileAttributes.Directory),
+                                FileName = item.Name
+                            };
+                        }
+                        catch (Exception)
+                        {
+                            // Something went wrong accessing the file. Return null, and filter these out later.
+                            return null;
+                        }
                     })
+                    .Where(item => item != null)
                     .OrderBy(item => item.FileName)
                     .OrderByDescending(item => item.IsFolder);
             }
