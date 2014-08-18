@@ -43,7 +43,11 @@ namespace Breadcrumbs
 
         void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
-            m_mainVM.CurrentPosition = new GeocoordinateEx(args.Position.Coordinate);
+            if (args.Position.Coordinate.PositionSource == PositionSource.Satellite)
+            {
+                m_mainVM.CurrentPosition = new GeocoordinateEx(args.Position.Coordinate);
+            }
+            // else: ignore Cellular and WiFi sources because they're not good enough for our purposes.
         }
 
         void Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
