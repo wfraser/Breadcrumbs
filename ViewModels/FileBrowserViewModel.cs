@@ -452,7 +452,7 @@ namespace Breadcrumbs.ViewModels
                                         + "{1} uploaded\n"
                                         + "{2} up to date\n"
                                         + "{3} deleted locally\n"
-                                        + "{4} deleted from SkyDrive",
+                                        + "{4} deleted from OneDrive",
                                         result.Downloaded, result.Uploaded, result.UpToDate, result.DeletedLocal, result.DeletedCloud),
                                     "Breadcrumbs Cloud Sync",
                                     MessageBoxButton.OK));

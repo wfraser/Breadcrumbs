@@ -17,7 +17,7 @@ namespace Breadcrumbs
         // Magic number from https://account.live.com/developers/applications/index
         private static readonly string ClientID = "000000004C0FB389";
 
-        // What we name the GPX folder in the user's SkyDrive.
+        // What we name the GPX folder in the user's OneDrive.
         private static readonly string GpxFolderName = "Breadcrumbs";
 
         private async Task<string> GetGpxFolderId()
@@ -36,7 +36,7 @@ namespace Breadcrumbs
             var files = r.Result["data"] as IList<object>;
             if (files == null)
             {
-                Utils.ShowError("Result from SkyDrive files query is an unknown type.");
+                Utils.ShowError("Result from OneDrive files query is an unknown type.");
                 return null;
             }
 
@@ -44,14 +44,14 @@ namespace Breadcrumbs
             {
                 if (!folder.Keys.Contains("name"))
                 {
-                    Utils.ShowError("A folder returned from SkyDrive has no Name field!");
+                    Utils.ShowError("A folder returned from OneDrive has no Name field!");
                     return null;
                 }
                 else if (string.Equals(folder["name"], GpxFolderName))
                 {
                     if (!folder.Keys.Contains("id"))
                     {
-                        Utils.ShowError("GPX folder returned from SkyDrive has no ID field!");
+                        Utils.ShowError("GPX folder returned from OneDrive has no ID field!");
                         return null;
                     }
                     else
@@ -109,7 +109,7 @@ namespace Breadcrumbs
             var children = r.Result["data"] as IList<object>;
             if (children == null)
             {
-                Utils.ShowError("Result from SkyDrive files query is an unknown type.");
+                Utils.ShowError("Result from OneDrive files query is an unknown type.");
                 return null;
             }
 
@@ -168,12 +168,12 @@ namespace Breadcrumbs
             return await LocalTreeEnumerate(localGpxFolder);
         }
 
-        // Returns the SkyDrive ID involved in the copy.
+        // Returns the OneDrive ID involved in the copy.
         private async Task<FileContainer> CopyFile(FileContainer src, FileContainer dest)
         {
             if (src.Source == dest.Source)
             {
-                throw new ArgumentException("Source and Destination source types (Local vs. SkyDrive) need to be different.");
+                throw new ArgumentException("Source and Destination source types (Local vs. OneDrive) need to be different.");
             }
 
             switch (src.Source)
@@ -219,10 +219,10 @@ namespace Breadcrumbs
 
                             return new FileContainer()
                             {
-                                Source = FileContainer.SourceType.SkyDrive,
+                                Source = FileContainer.SourceType.OneDrive,
                                 Path = src.Path,
                                 MTime = DateTime.Parse(result.Result["updated_time"] as string, null, System.Globalization.DateTimeStyles.RoundtripKind).ToUniversalTime(),
-                                SkyDriveId = result.Result["id"] as string
+                                OneDriveId = result.Result["id"] as string
                             };
                         }
                         catch (TaskCanceledException)
@@ -236,11 +236,11 @@ namespace Breadcrumbs
                     }
                     break;
 
-                case FileContainer.SourceType.SkyDrive:
+                case FileContainer.SourceType.OneDrive:
                     {
                         try
                         {
-                            LiveDownloadOperationResult download = await s_liveClient.DownloadAsync(src.SkyDriveId + "/content/");
+                            LiveDownloadOperationResult download = await s_liveClient.DownloadAsync(src.OneDriveId + "/content/");
                             IStorageFolder localGpxFolder = await m_mainVM.GetLocalGpxFolder();
                             IStorageFile newFile = await localGpxFolder.CreatePathAsync(dest.Path.Substring(1), CreationCollisionOption.ReplaceExisting);
                             using (Stream destStream = await newFile.OpenStreamForWriteAsync())
@@ -275,10 +275,10 @@ namespace Breadcrumbs
             return await CopyFile(src, new FileContainer()
             {
                 Path = src.Path,
-                Source = (src.Source == FileContainer.SourceType.Local) ? FileContainer.SourceType.SkyDrive
+                Source = (src.Source == FileContainer.SourceType.Local) ? FileContainer.SourceType.OneDrive
                                                                         : FileContainer.SourceType.Local,
                 MTime = src.MTime,
-                SkyDriveId = null,
+                OneDriveId = null,
                 StorageFile = null,
             });
         }
@@ -303,20 +303,20 @@ namespace Breadcrumbs
                         StorageFile = src.StorageFile
                     };
 
-                case FileContainer.SourceType.SkyDrive:
+                case FileContainer.SourceType.OneDrive:
                     {
                         var props = new Dictionary<string, object>();
                         props.Add("name", newName);
                         LiveOperationResult result;
-                        result = await s_liveClient.PutAsync(src.SkyDriveId, props);
+                        result = await s_liveClient.PutAsync(src.OneDriveId, props);
                         string mTimeStr = result.Result["updated_time"] as string;
                         string newId = result.Result["id"] as string;
                         return new FileContainer()
                         {
-                            Source = FileContainer.SourceType.SkyDrive,
+                            Source = FileContainer.SourceType.OneDrive,
                             Path = newPath,
                             MTime = DateTime.Parse(mTimeStr, null, System.Globalization.DateTimeStyles.RoundtripKind).ToUniversalTime(),
-                            SkyDriveId = newId
+                            OneDriveId = newId
                         };
                     }
             }
@@ -331,8 +331,8 @@ namespace Breadcrumbs
                     await file.StorageFile.DeleteAsync();
                     break;
 
-                case FileContainer.SourceType.SkyDrive:
-                    await s_liveClient.DeleteAsync(file.SkyDriveId);
+                case FileContainer.SourceType.OneDrive:
+                    await s_liveClient.DeleteAsync(file.OneDriveId);
                     break;
             }
         }
@@ -383,7 +383,7 @@ namespace Breadcrumbs
 
             string localPrefix = await GetLocalPrefix();
 
-            progressUpdate(-1, "Getting list of SkyDrive files.");
+            progressUpdate(-1, "Getting list of OneDrive files.");
             IEnumerable<IDictionary<string, object>> cloudResults = await GetCloudFiles();
             foreach (var child in cloudResults)
             {
@@ -394,9 +394,9 @@ namespace Breadcrumbs
                 cloudFiles.Add(new FileContainer()
                 {
                     Path = name,
-                    Source = FileContainer.SourceType.SkyDrive,
+                    Source = FileContainer.SourceType.OneDrive,
                     MTime = mtime,
-                    SkyDriveId = id
+                    OneDriveId = id
                 });
             }
 
@@ -445,12 +445,12 @@ namespace Breadcrumbs
 
                             if (mapping == null)
                             {
-                                await fileMap.AddMapping(localFile.Path, localFile.MTime, cloudCopy.SkyDriveId, cloudCopy.MTime);
+                                await fileMap.AddMapping(localFile.Path, localFile.MTime, cloudCopy.OneDriveId, cloudCopy.MTime);
                             }
                             else
                             {
-                                mapping.SkyDriveId = cloudCopy.SkyDriveId;
-                                mapping.SkyDriveModifiedTime = cloudCopy.MTime; // update the skydrive mtime
+                                mapping.OneDriveId = cloudCopy.OneDriveId;
+                                mapping.OneDriveModifiedTime = cloudCopy.MTime; // update the OneDrive mtime
                             }
                         }
                     }
@@ -458,7 +458,7 @@ namespace Breadcrumbs
                     {
                         CloudFileMap.Mapping mapping = fileMap.GetMapping(cloudFile.Path);
 
-                        if ((mapping != null) && (cloudFile.MTime <= mapping.SkyDriveModifiedTime))
+                        if ((mapping != null) && (cloudFile.MTime <= mapping.OneDriveModifiedTime))
                         {
                             // We have a mapping for the file, but the local version is gone.
                             // Unless the cloud file is also updated from when we last saw it, delete the cloud file.
@@ -476,7 +476,7 @@ namespace Breadcrumbs
 
                             if (mapping == null)
                             {
-                                await fileMap.AddMapping(localCopy.Path, localCopy.MTime, cloudFile.SkyDriveId, cloudFile.MTime);
+                                await fileMap.AddMapping(localCopy.Path, localCopy.MTime, cloudFile.OneDriveId, cloudFile.MTime);
                             }
                             else
                             {
@@ -504,22 +504,22 @@ namespace Breadcrumbs
                             uploaded++;
                             downloaded++;
 
-                            await fileMap.AddMapping(local2.Path, local2.MTime, local2Copy.SkyDriveId, local2Copy.MTime);
-                            await fileMap.AddMapping(cloudFile.Path, cloudCopy.MTime, cloudFile.SkyDriveId, cloudFile.MTime);
+                            await fileMap.AddMapping(local2.Path, local2.MTime, local2Copy.OneDriveId, local2Copy.MTime);
+                            await fileMap.AddMapping(cloudFile.Path, cloudCopy.MTime, cloudFile.OneDriveId, cloudFile.MTime);
 
                             pathsSeen.Add(local2.Path);
                             pathsSeen.Add(cloudFile.Path);
                         }
-                        else if (localFile.MTime != mapping.LocalModifiedTime || cloudFile.MTime != mapping.SkyDriveModifiedTime)
+                        else if (localFile.MTime != mapping.LocalModifiedTime || cloudFile.MTime != mapping.OneDriveModifiedTime)
                         {
                             // One or both of the files was updated. Figure out which one is newer, and copy that over the old one.
-                            // Note that we can't just compare MTimes alone, as skydrive file MTimes are set to their upload time.
+                            // Note that we can't just compare MTimes alone, as OneDrive file MTimes are set to their upload time.
 
                             DateTime localComparisonTime = DateTime.MinValue;
                             DateTime cloudComparisonTime = DateTime.MinValue;
                             if (localFile.MTime != mapping.LocalModifiedTime)
                                 localComparisonTime = localFile.MTime;
-                            if (cloudFile.MTime != mapping.SkyDriveModifiedTime)
+                            if (cloudFile.MTime != mapping.OneDriveModifiedTime)
                                 cloudComparisonTime = cloudFile.MTime;
 
                             int c = localComparisonTime.CompareTo(cloudComparisonTime);
@@ -528,7 +528,7 @@ namespace Breadcrumbs
                                 // Both files have the same time for comparison purposes. Just update the mapping.
                                 progressUpdate(progress, string.Empty);
                                 mapping.LocalModifiedTime = localFile.MTime;
-                                mapping.SkyDriveModifiedTime = cloudFile.MTime;
+                                mapping.OneDriveModifiedTime = cloudFile.MTime;
                                 upToDate++;
                             }
                             else
@@ -556,8 +556,8 @@ namespace Breadcrumbs
                                 }
                                 else
                                 {
-                                    mapping.SkyDriveId = result.SkyDriveId;
-                                    mapping.SkyDriveModifiedTime = result.MTime;
+                                    mapping.OneDriveId = result.OneDriveId;
+                                    mapping.OneDriveModifiedTime = result.MTime;
                                 }
                             }
                         }
@@ -600,7 +600,7 @@ namespace Breadcrumbs
                     new string[] {
                         // Scopes and permsissions.
                         // See http://msdn.microsoft.com/en-us/library/live/hh243646.aspx
-                        "wl.skydrive_update", // Read-write access to user's Skydrive
+                        "wl.skydrive_update", // Read-write access to user's OneDrive
                         "wl.signin",          // Automatic signin, so they don't have to type a password.
                     });
                 if (result.Status == LiveConnectSessionStatus.Connected)
@@ -651,13 +651,13 @@ namespace Breadcrumbs
             public enum SourceType
             {
                 Local,
-                SkyDrive
+                OneDrive
             }
 
             public string Path;
             public SourceType Source;
             public IStorageFile StorageFile;
-            public string SkyDriveId;
+            public string OneDriveId;
             public DateTime MTime;
 
             public override string ToString()

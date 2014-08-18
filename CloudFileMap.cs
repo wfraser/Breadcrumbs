@@ -61,28 +61,34 @@ namespace Breadcrumbs
             return m_files.Where(mapping => mapping.Path.Equals(path, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
         }
 
-        public async Task AddMapping(string path, DateTime localModTime, string skydriveId, DateTime skydriveModTime)
+        public async Task AddMapping(string path, DateTime localModTime, string oneDriveId, DateTime oneDriveModTime)
         {
             m_files.Add(new Mapping()
             {
                 Path = path,
                 LocalModifiedTime = localModTime,
-                SkyDriveId = skydriveId,
-                SkyDriveModifiedTime = skydriveModTime,
+                OneDriveId = oneDriveId,
+                OneDriveModifiedTime = oneDriveModTime,
             });
             await Save();
         }
 
         public async Task RemoveMappingsWhere(Predicate<Mapping> predicate)
         {
-            m_files.RemoveAll(predicate);
-            await Save();
+            int removed = m_files.RemoveAll(predicate);
+            if (removed > 0)
+            {
+                await Save();
+            }
         }
 
         public async Task RemoveMapping(string path)
         {
-            m_files.RemoveAll(mapping => mapping.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
-            await Save();
+            int removed = m_files.RemoveAll(mapping => mapping.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
+            if (removed > 0)
+            {
+                await Save();
+            }
         }
 
         private async Task Save()
@@ -124,8 +130,8 @@ namespace Breadcrumbs
                 set;
             }
 
-            [XmlElement]
-            public string SkyDriveId
+            [XmlElement("SkyDriveId")]
+            public string OneDriveId
             {
                 get;
                 set;
@@ -146,14 +152,14 @@ namespace Breadcrumbs
             }
 
             [XmlElement("SkyDriveModifiedTime")]
-            public string SkyDriveModifiedTimeString
+            public string OneDriveModifiedTimeString
             {
-                get { return SkyDriveModifiedTime.ToUniversalTime().ToString("o"); }
-                set { SkyDriveModifiedTime = DateTime.Parse(value, null, System.Globalization.DateTimeStyles.RoundtripKind); }
+                get { return OneDriveModifiedTime.ToUniversalTime().ToString("o"); }
+                set { OneDriveModifiedTime = DateTime.Parse(value, null, System.Globalization.DateTimeStyles.RoundtripKind); }
             }
 
             [XmlIgnore]
-            public DateTime SkyDriveModifiedTime
+            public DateTime OneDriveModifiedTime
             {
                 get;
                 set;

@@ -149,7 +149,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Bottom"
                        Margin="0"
-                       Text="Syncing with SkyDrive..."/>
+                       Text="Syncing with OneDrive..."/>
 
             <ProgressBar Grid.Row="1"
                          IsIndeterminate="{Binding SyncProgressIsIndeterminate}"
