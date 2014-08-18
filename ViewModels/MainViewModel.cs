@@ -616,6 +616,50 @@ namespace Breadcrumbs.ViewModels
             return System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
         }
 
+        public bool LocationConsent
+        {
+            get
+            {
+                return (bool)IsolatedStorageSettings.ApplicationSettings["LocationConsent"];
+            }
+            set
+            {
+                IsolatedStorageSettings.ApplicationSettings["LocationConsent"] = value;
+                IsolatedStorageSettings.ApplicationSettings.Save();
+                NotifyPropertyChanged("LocationConsent");
+            }
+        }
+
+        public bool LocationConsentPrompt()
+        {
+            MessageBoxResult result = MessageBox.Show(
+                    "This app accesses your phone's location. Is that okay?",
+                    "Location",
+                    MessageBoxButton.OKCancel);
+
+            bool ok = (result == MessageBoxResult.OK);
+
+            LocationConsent = ok;
+
+            return ok;
+        }
+
+        public bool LockScreenConsentPrompt()
+        {
+            MessageBoxResult result = MessageBox.Show(
+                    "This app will stay running under your phone's lock screen when the GPS is enabled."
+                    + " Is that okay?",
+                    "Run Under Lock Screen",
+                    MessageBoxButton.OKCancel);
+
+            bool ok = (result == MessageBoxResult.OK);
+
+            IsolatedStorageSettings.ApplicationSettings["LockScreenConsent"] = ok;
+            IsolatedStorageSettings.ApplicationSettings.Save();
+
+            return ok;
+        }
+
         private UnitMode m_units;
         private CoordinateMode m_coordMode;
         private bool m_isGpsEnabled;

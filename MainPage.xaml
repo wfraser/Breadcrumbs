@@ -38,12 +38,11 @@
           Background="Transparent">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
-            <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
         <local:MapCompositeControl x:Name="MapComposite"
-                                   Grid.Column="1" Grid.ColumnSpan="2"
+                                   Grid.Column="1"
                                    DataContext="{Binding MapViewModel}"/>
 
         <local:MapSidebarControl x:Name="Sidebar"
@@ -55,7 +54,7 @@
         <!-- Visibility is set in code to prevent initial visible flash. -->
         <!-- used to be: Visibility="{Binding DataContext.IsFileBrowserVisible, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" -->
         <local:FileBrowser x:Name="FileBrowser"
-                           Grid.ColumnSpan="3"
+                           Grid.ColumnSpan="2"
                            Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                            DataContext="{Binding FileBrowserViewModel}"/>
     </Grid>

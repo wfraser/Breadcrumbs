@@ -49,9 +49,9 @@ namespace Breadcrumbs
 
         private void GpsToggle_Click(object sender, RoutedEventArgs e)
         {
-            if (!(bool)IsolatedStorageSettings.ApplicationSettings["LocationConsent"])
+            if (!m_viewModel.MainVM.LocationConsent)
             {
-                if (!App.LocationConsentPrompt())
+                if (!m_viewModel.MainVM.LocationConsentPrompt())
                 {
                     // User doesn't want location.
                     return;
@@ -83,11 +83,25 @@ namespace Breadcrumbs
             if (m_viewModel.IsExpanded)
             {
                 m_viewModel.IsExpanded = false;
+                m_viewModel.IsExtraExpanded = false;
             }
             else
             {
                 m_viewModel.IsExpanded = true;
                 ExpandedScrollViewer.Focus();
+            }
+        }
+
+        private void PreferencesToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_viewModel.IsExtraExpanded)
+            {
+                m_viewModel.IsExtraExpanded = false;
+            }
+            else
+            {
+                m_viewModel.IsExtraExpanded = true;
+                ExtraScrollViewer.Focus();
             }
         }
 
@@ -211,7 +225,10 @@ namespace Breadcrumbs
             // figure out whether it's a descendant of the expanded panel or not...
 
             FrameworkElement focused = System.Windows.Input.FocusManager.GetFocusedElement() as FrameworkElement;
-            if (focused == null || (!MenuButton.HasDescendant(focused) && !ExpandedScrollViewer.HasDescendant(focused)))
+            if (focused == null || 
+                (!MenuButton.HasDescendant(focused) 
+                    && !ExpandedScrollViewer.HasDescendant(focused)
+                    && !ExtraScrollViewer.HasDescendant(focused)))
             {
                 // Note the exclusion of MenuButton above. If focus changed to the Menu button, there's a race condition between this
                 // executing and its Click handler. If this function runs first, it will pop the menu back out again.

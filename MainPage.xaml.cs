@@ -27,12 +27,12 @@ namespace Breadcrumbs
         {
             if (!IsolatedStorageSettings.ApplicationSettings.Contains("LocationConsent"))
             {
-                App.LocationConsentPrompt();
+                m_viewModel.LocationConsentPrompt();
             }
 
             if (!IsolatedStorageSettings.ApplicationSettings.Contains("LockScreenConsent"))
             {
-                App.LockScreenConsentPrompt();
+                m_viewModel.LockScreenConsentPrompt();
             }
 
             UriMapper uriMapper = (UriMapper)App.RootFrame.UriMapper;

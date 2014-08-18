@@ -9,7 +9,7 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    d:DesignHeight="480" d:DesignWidth="360"
+    d:DesignHeight="480" d:DesignWidth="720"
     Loaded="OnLoaded"
     x:Name="SidebarRoot">
 
@@ -17,6 +17,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
             <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Background="{StaticResource PhoneChromeBrush}">
             <local:ImageButton x:Name="MenuButton"
@@ -121,10 +122,33 @@
                     <Button x:Name="DMSToggleButton"
                             Content="Coord Mode"
                             Click="DMSToggleButton_Click"/>
+
+                    <Button x:Name="PreferencesToggle"
+                            Content="Preferences"
+                            Click="PreferencesToggle_Click"/>
                     
                     <Button x:Name="AboutButton"
                             Content="About"
                             Click="AboutButton_Click"/>
+                    
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        
+        <Border BorderBrush="#333333"
+                BorderThickness="1,0,0,0"
+                Grid.Column="2"
+                Background="{StaticResource PhoneChromeBrush}"
+                Visibility="{Binding IsExtraExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ScrollViewer x:Name="ExtraScrollViewer">
+                <StackPanel>
+                    <CheckBox IsChecked="{Binding MainVM.LocationConsent, Mode=TwoWay}">
+                        Location Services Enabled
+                    </CheckBox>
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="10">
+                        <Run>With Location Services disabled, Breadcrumbs cannot function as a GPS tracker, but it can still be used to read GPX files.</Run>
+                    </TextBlock>
                 </StackPanel>
             </ScrollViewer>
         </Border>

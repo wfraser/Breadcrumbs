@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,12 +24,23 @@ namespace Breadcrumbs.ViewModels
             }
         }
 
+        public bool IsExtraExpanded
+        {
+            get { return m_isExtraExpanded; }
+            set
+            {
+                m_isExtraExpanded = value;
+                NotifyPropertyChanged("IsExtraExpanded");
+            }
+        }
+
         public MapSidebarViewModel(MainViewModel mainVM)
         {
             m_mainVM = mainVM;
         }
 
         private bool m_isExpanded;
+        private bool m_isExtraExpanded;
         private MainViewModel m_mainVM;
     }
 }
