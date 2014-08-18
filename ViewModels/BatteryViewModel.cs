@@ -18,7 +18,11 @@ namespace Breadcrumbs.ViewModels
 
         public string RemainingTime
         {
-            get { return Battery.GetDefault().RemainingDischargeTime.ToString("h\\:mm"); }
+            get
+            {
+                TimeSpan t = Battery.GetDefault().RemainingDischargeTime;
+                return string.Format("{0}:{1:G2}", Math.Floor(t.TotalHours), t.Minutes);
+            }
         }
 
         public bool IsCharging
