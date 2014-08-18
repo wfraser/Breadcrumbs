@@ -78,7 +78,7 @@
                     Content="+"
                     FontWeight="Bold"
                     Width="70" Height="70"
-                    Background="Black"
+                    Background="{StaticResource PhoneBackgroundBrush}"
                     Click="ZoomInButton_Click"/>
             <Button x:Name="ZoomOutButton"
                     Grid.Column="1" Grid.Row="1"
@@ -86,7 +86,7 @@
                     Content="-"
                     FontWeight="Bold"
                     Width="70" Height="70"
-                    Background="Black"
+                    Background="{StaticResource PhoneBackgroundBrush}"
                     Click="ZoomOutButton_Click"/>
             
             <Button x:Name="RecenterButton"
@@ -95,7 +95,7 @@
                     Content="o"
                     FontWeight="Bold"
                     Width="70" Height="70"
-                    Background="Black"
+                    Background="{StaticResource PhoneBackgroundBrush}"
                     Visibility="{Binding CenterOnCurrentPosition, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                     Click="RecenterButton_Click"/>
         </Grid>

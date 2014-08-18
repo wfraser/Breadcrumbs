@@ -15,32 +15,43 @@
         <Button Click="TheButton_Click"
                 IsEnabled="{Binding IsEnabled, ElementName=BtnRoot}">
             <StackPanel Orientation="{Binding Orientation, ElementName=BtnRoot}">
-                
-                <!--
-                    This is a giant hack to get the image to be faded when the button is disabled.
-                    When IsEnabled is false, it swaps out the regular image for one in a border
-                    with a dark background masked to the image.
-                -->
-                
-                <!-- Darkened image -->
-                <Border Background="{StaticResource PhoneDisabledBrush}"
-                        Opacity="0.5"
-                        Visibility="{Binding IsEnabled, ElementName=BtnRoot, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                    <Border.OpacityMask>
-                        <ImageBrush ImageSource="{Binding ImageSource, ElementName=BtnRoot}"/>
-                    </Border.OpacityMask>
-                    <Image Source="{Binding ImageSource, ElementName=BtnRoot}"
-                           Width="{Binding ImageWidth, ElementName=BtnRoot}"
-                           Height="{Binding ImageHeight, ElementName=BtnRoot}"
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </Border>
 
-                <!-- Regular image -->
-                <Image Source="{Binding ImageSource, ElementName=BtnRoot}"
+                <!--
+                    Rather than showing the actual image, it is just used as a mask on a rectangle
+                    of solid color, either PhoneForegroundBrush or PhoneDisabledBrush.
+                -->
+
+                <!-- Enabled: -->
+                <Rectangle Visibility="{Binding IsEnabled, ElementName=BtnRoot, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           Fill="{StaticResource PhoneForegroundBrush}"
                            Width="{Binding ImageWidth, ElementName=BtnRoot}"
                            Height="{Binding ImageHeight, ElementName=BtnRoot}"
-                           HorizontalAlignment="Left" VerticalAlignment="Center"
-                           Visibility="{Binding IsEnabled, ElementName=BtnRoot, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                           HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Rectangle.OpacityMask>
+                        <ImageBrush ImageSource="{Binding ImageSource, ElementName=BtnRoot}"/>
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+
+                <!-- Disabled: -->
+                <Rectangle Visibility="{Binding IsEnabled, ElementName=BtnRoot, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                           Fill="{StaticResource PhoneDisabledBrush}"
+                           Width="{Binding ImageWidth, ElementName=BtnRoot}"
+                           Height="{Binding ImageHeight, ElementName=BtnRoot}"
+                           HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Rectangle.OpacityMask>
+                        <ImageBrush ImageSource="{Binding ImageSource, ElementName=BtnRoot}"/>
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+
+                <!-- To show the actual image instead: -->
+                <!--
+                <Image Source="{Binding ImageSource, ElementName=BtnRoot}"
+                       Width="{Binding ImageWidth, ElementName=BtnRoot}"
+                       Height="{Binding ImageHeight, ElementName=BtnRoot}"
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       Visibility="{Binding IsEnabled, ElementName=BtnRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
+                </Image>
+                -->
 
                 <TextBlock Text="{Binding Text, ElementName=BtnRoot}"
                            Margin="15,0,0,0"

@@ -57,12 +57,20 @@
                         <StackPanel x:Name="ItemPanel"
                                     Orientation="Horizontal"
                                     DoubleTap="SelectItem">
-                            <Image Source="/Assets/Icons/folder.png"
-                                    Width="64" Height="64"
-                                    Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            <Image Source="/Assets/Icons/file.png"
-                                    Width="64" Height="64"
-                                    Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
+                            <Rectangle Width="64" Height="64"
+                                       Fill="{StaticResource PhoneForegroundBrush}"
+                                       Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Rectangle.OpacityMask>
+                                    <ImageBrush ImageSource="/Assets/Icons/folder.png"/>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                            <Rectangle Width="64" Height="64"
+                                       Fill="{StaticResource PhoneForegroundBrush}"
+                                       Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                                <Rectangle.OpacityMask>
+                                    <ImageBrush ImageSource="/Assets/Icons/file.png"/>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
                             <TextBlock Text="{Binding FileName}"
                                        VerticalAlignment="Center"
                                        FontSize="{StaticResource PhoneFontSizeLarge}"/>
@@ -100,8 +108,12 @@
                 <Button x:Name="SyncButton"
                         Grid.Column="3"
                         Click="SyncButton_Click">
-                    <Image Source="/Assets/Icons/skydrive.png"
-                           Width="50"/>
+                    <Rectangle Width="50" Height="30"
+                               Fill="{StaticResource PhoneForegroundBrush}">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="/Assets/Icons/skydrive.png"/>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
                 </Button>
 
                 <Button x:Name="DeleteButton"
