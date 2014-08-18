@@ -148,6 +148,9 @@
                     <TextBlock TextWrapping="Wrap"
                                Margin="10">
                         <Run>With Location Services disabled, Breadcrumbs cannot function as a GPS tracker, but it can still be used to read GPX files.</Run>
+                        <LineBreak/><LineBreak/>
+                        <Bold>Privacy Policy:</Bold><LineBreak/>
+                        <Run>Breadcrumbs does not transmit your location data to any 3rd party, except as GPX files to your OneDrive storage when you use the cloud sync feature.</Run>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>
