@@ -84,6 +84,33 @@ namespace Breadcrumbs
             }
         }
 
+        private double GetMapPixelSizeMeters()
+        {
+            // Get the coordinate of the center pixel and the pixel to the right of it.
+            Point viewCenter = new Point(MapControl.ActualWidth / 2, MapControl.ActualHeight / 2);
+
+            GeoCoordinate center = MapControl.ConvertViewportPointToGeoCoordinate(viewCenter);
+            GeoCoordinate right = MapControl.ConvertViewportPointToGeoCoordinate(new Point(viewCenter.X + 1, viewCenter.Y));
+
+            double pixelRadians = Math.Abs(Utils.ToRadians(center.Longitude) - Utils.ToRadians(right.Longitude));
+            return Utils.EarthRadiusMeters * pixelRadians;
+        }
+
+        private void UpdateCurrentPositionCircle()
+        {
+            if (m_viewModel.MainVM.CurrentPosition == null)
+            {
+                return;
+            }
+
+            GeoCoordinate center = m_viewModel.MainVM.CurrentPosition.GeoCoordinate;
+
+            // Minimum radius of 1 pixel.
+            double radius = Math.Max(GetMapPixelSizeMeters(), center.HorizontalAccuracy);
+
+            CurrentPositionCircle.Path = Utils.MakeCircle(center, radius);
+        }
+
         void MainVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // This is to work around the lack of dependency properties in most of the map controls.
@@ -92,7 +119,6 @@ namespace Breadcrumbs
                 case "CurrentGeoCoordinate":
                     {
                         GeoCoordinate center = m_viewModel.MainVM.CurrentPosition.GeoCoordinate;
-                        CurrentPositionCircle.Path = Utils.MakeCircle(center, center.HorizontalAccuracy);
 
                         if (m_viewModel.MainVM.IsTrackingEnabled)
                         {
@@ -283,5 +309,10 @@ namespace Breadcrumbs
         bool m_mapLoaded;
         private ViewModels.MapCompositeViewModel m_viewModel;
         private bool m_haveInitialPosition;
+
+        private void MapControl_ZoomLevelChanged(object sender, MapZoomLevelChangedEventArgs e)
+        {
+            UpdateCurrentPositionCircle();
+        }
     }
 }

@@ -31,6 +31,7 @@
                   Grid.ColumnSpan="2" Grid.RowSpan="2"
                   CartographicMode="{Binding MapType, Mode=TwoWay}"
                   CenterChanged="MapControl_CenterChanged"
+                  ZoomLevelChanged="MapControl_ZoomLevelChanged"
                   Background="{StaticResource PhoneBackgroundBrush}"
                   Loaded="MapControl_Loaded">
             <maps:Map.MapElements>
