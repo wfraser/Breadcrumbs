@@ -97,6 +97,9 @@
     <Compile Include="BooleanToVisibilityConverter.cs" />
     <Compile Include="CloudFileMap.cs" />
     <Compile Include="CloudSync.cs" />
+    <Compile Include="Controls\BatteryStatusControl.xaml.cs">
+      <DependentUpon>BatteryStatusControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FileBrowser.xaml.cs">
       <DependentUpon>FileBrowser.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,7 @@
     </Compile>
     <Compile Include="UriMapper.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ViewModels\BatteryViewModel.cs" />
     <Compile Include="ViewModels\FileBrowserViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MapCompositeViewModel.cs" />
@@ -138,6 +142,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="Controls\BatteryStatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\FileBrowser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

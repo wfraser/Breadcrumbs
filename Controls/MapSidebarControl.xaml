@@ -52,6 +52,7 @@
                     <RowDefinition Height="Auto"/><!-- 5 -->
                     <RowDefinition Height="Auto"/><!-- 6 -->
                     <RowDefinition Height="Auto"/><!-- 7 -->
+                    <RowDefinition Height="Auto"/><!-- 8 -->
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Lat: " HorizontalAlignment="Right"/>
@@ -88,6 +89,8 @@
                     <TextBlock Grid.Column="4" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:ss}', TargetNullValue='--', FallbackValue='--'}" TextAlignment="Center"/>
                     <TextBlock Grid.Column="5" Text="{Binding MainVM.Timestamp, StringFormat='{} {0:zzz}', TargetNullValue='+00:00', FallbackValue='+00:00'}"/>
                 </Grid>
+
+                <local:BatteryStatusControl Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"/>
             </Grid>
         </StackPanel>
         

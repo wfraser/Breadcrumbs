@@ -146,6 +146,8 @@ namespace Breadcrumbs
                             }
                         }
 
+                        UpdateCurrentPositionCircle();
+
                         if (!m_haveInitialPosition)
                         {
                             m_haveInitialPosition = true;
