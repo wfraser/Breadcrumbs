@@ -214,13 +214,13 @@ namespace Breadcrumbs
             await Task.WhenAll(tasks);
         }
 
-        public static async void LockStepAsync<T>(
+        public static async Task LockStepAsync<T>(
             IEnumerable<T> listA, IEnumerable<T> listB,
             Func<T, IComparable> orderBy,
             Func<T, T, Task> action,
-            bool runInorder = true)
+            bool runInOrder = true)
         {
-            await LockStepAsync(listA, listB, orderBy, (a, b, progress) => action(a, b), runInorder);
+            await LockStepAsync(listA, listB, orderBy, (a, b, progress) => action(a, b), runInOrder);
         }
 
         public static void LockStep<T>(

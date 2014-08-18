@@ -418,10 +418,16 @@ namespace Breadcrumbs
             var pathsSeen = new HashSet<string>();
             CloudFileMap fileMap = m_fileMap.Value;
 
+            var deleteLocal = new List<FileContainer>();
+            var deleteCloud = new List<FileContainer>();
+            var upload = new List<FileContainer>();
+            var download = new List<FileContainer>();
+            var collision = new List<Tuple<FileContainer, FileContainer>>();
+
             await Utils.LockStepAsync(localFiles, cloudFiles,
                 orderBy: file => file.Path,
                 runInOrder: true,
-                action: async (localFile, cloudFile, progress) =>
+                action: async (localFile, cloudFile) =>
                 {
                     if (cloudFile == null)
                     {
@@ -431,27 +437,11 @@ namespace Breadcrumbs
                         {
                             // We have a mapping for the file, but the cloud version is gone.
                             // Unless the local file is also updated from when we last saw it, delete the local file.
-                            progressUpdate(progress, "Deleting " + localFile.Path);
-                            await DeleteFile(localFile);
-                            await fileMap.RemoveMapping(localFile.Path);
-                            deletedLocal++;
+                            deleteLocal.Add(localFile);
                         }
                         else
                         {
-                            progressUpdate(progress, "Uploading " + localFile.Path);
-                            FileContainer cloudCopy = await CopyFile(localFile);
-                            pathsSeen.Add(localFile.Path);
-                            uploaded++;
-
-                            if (mapping == null)
-                            {
-                                await fileMap.AddMapping(localFile.Path, localFile.MTime, cloudCopy.OneDriveId, cloudCopy.MTime);
-                            }
-                            else
-                            {
-                                mapping.OneDriveId = cloudCopy.OneDriveId;
-                                mapping.OneDriveModifiedTime = cloudCopy.MTime; // update the OneDrive mtime
-                            }
+                            upload.Add(localFile);
                         }
                     }
                     else if (localFile == null)
@@ -462,26 +452,11 @@ namespace Breadcrumbs
                         {
                             // We have a mapping for the file, but the local version is gone.
                             // Unless the cloud file is also updated from when we last saw it, delete the cloud file.
-                            progressUpdate(progress, "Deleting " + cloudFile.Path);
-                            await DeleteFile(cloudFile);
-                            await fileMap.RemoveMapping(cloudFile.Path);
-                            deletedCloud++;
+                            deleteCloud.Add(cloudFile);
                         }
                         else
                         {
-                            progressUpdate(progress, "Downloading " + cloudFile.Path);
-                            FileContainer localCopy = await CopyFile(cloudFile);
-                            pathsSeen.Add(cloudFile.Path);
-                            downloaded++;
-
-                            if (mapping == null)
-                            {
-                                await fileMap.AddMapping(localCopy.Path, localCopy.MTime, cloudFile.OneDriveId, cloudFile.MTime);
-                            }
-                            else
-                            {
-                                mapping.LocalModifiedTime = localCopy.MTime;
-                            }
+                            download.Add(cloudFile);
                         }
                     }
                     else if (localFile != null && cloudFile != null)
@@ -496,79 +471,132 @@ namespace Breadcrumbs
                             FileContainer local2 = await RenameFile(localFile, MakeUniqueFilename(localFile));
 
                             // Copy both files.
-                            progressUpdate(progress, "Uploading " + local2.Path);
-                            FileContainer local2Copy = await CopyFile(local2);
-                            progressUpdate(progress, "Downloading " + cloudFile.Path);
-                            FileContainer cloudCopy = await CopyFile(cloudFile);
-
-                            uploaded++;
-                            downloaded++;
-
-                            await fileMap.AddMapping(local2.Path, local2.MTime, local2Copy.OneDriveId, local2Copy.MTime);
-                            await fileMap.AddMapping(cloudFile.Path, cloudCopy.MTime, cloudFile.OneDriveId, cloudFile.MTime);
-
-                            pathsSeen.Add(local2.Path);
-                            pathsSeen.Add(cloudFile.Path);
+                            upload.Add(local2);
+                            download.Add(cloudFile);
                         }
                         else if (localFile.MTime != mapping.LocalModifiedTime || cloudFile.MTime != mapping.OneDriveModifiedTime)
                         {
-                            // One or both of the files was updated. Figure out which one is newer, and copy that over the old one.
-                            // Note that we can't just compare MTimes alone, as OneDrive file MTimes are set to their upload time.
-
-                            DateTime localComparisonTime = DateTime.MinValue;
-                            DateTime cloudComparisonTime = DateTime.MinValue;
-                            if (localFile.MTime != mapping.LocalModifiedTime)
-                                localComparisonTime = localFile.MTime;
-                            if (cloudFile.MTime != mapping.OneDriveModifiedTime)
-                                cloudComparisonTime = cloudFile.MTime;
-
-                            int c = localComparisonTime.CompareTo(cloudComparisonTime);
-                            if (c == 0)
-                            {
-                                // Both files have the same time for comparison purposes. Just update the mapping.
-                                progressUpdate(progress, string.Empty);
-                                mapping.LocalModifiedTime = localFile.MTime;
-                                mapping.OneDriveModifiedTime = cloudFile.MTime;
-                                upToDate++;
-                            }
-                            else
-                            {
-                                FileContainer newer, older;
-                                if (c > 0)
-                                {
-                                    newer = localFile;
-                                    older = cloudFile;
-                                    progressUpdate(progress, "Uploading " + newer.Path);
-                                    uploaded++;
-                                }
-                                else
-                                {
-                                    newer = cloudFile;
-                                    older = localFile;
-                                    progressUpdate(progress, "Downloading " + newer.Path);
-                                    downloaded++;
-                                }
-
-                                FileContainer result = await CopyFile(newer, older);
-                                if (result.Source == FileContainer.SourceType.Local)
-                                {
-                                    mapping.LocalModifiedTime = result.MTime;
-                                }
-                                else
-                                {
-                                    mapping.OneDriveId = result.OneDriveId;
-                                    mapping.OneDriveModifiedTime = result.MTime;
-                                }
-                            }
+                            collision.Add(new Tuple<FileContainer, FileContainer>(localFile, cloudFile));
                         }
                         else
                         {
-                            progressUpdate(progress, string.Empty);
                             pathsSeen.Add(localFile.Path);
                             upToDate++;
                         }
                     }
                 }); // LockStepAsync
+
+            double total = deleteLocal.Count + deleteCloud.Count + upload.Count + download.Count + collision.Count;
+            double progress = 0;
+
+            foreach (var localFile in deleteLocal)
+            {
+                progressUpdate(progress++ / total, "Deleting " + localFile.Path);
+                await DeleteFile(localFile);
+                await fileMap.RemoveMapping(localFile.Path);
+                deletedLocal++;
+            }
+
+            foreach (var cloudFile in deleteCloud)
+            {
+                progressUpdate(progress++ / total, "Deleting " + cloudFile.Path);
+                await DeleteFile(cloudFile);
+                await fileMap.RemoveMapping(cloudFile.Path);
+                deletedCloud++;
+            }
+
+            foreach (var localFile in upload)
+            {
+                progressUpdate(progress++ / total, "Uploading " + localFile.Path);
+                FileContainer cloudCopy = await CopyFile(localFile);
+                pathsSeen.Add(localFile.Path);
+                uploaded++;
+
+                CloudFileMap.Mapping mapping = fileMap.GetMapping(localFile.Path);
+                if (mapping == null)
+                {
+                    await fileMap.AddMapping(localFile.Path, localFile.MTime, cloudCopy.OneDriveId, cloudCopy.MTime);
+                }
+                else
+                {
+                    mapping.OneDriveId = cloudCopy.OneDriveId;
+                    mapping.OneDriveModifiedTime = cloudCopy.MTime; // update the OneDrive mtime
+                }
+            }
+
+            foreach (var cloudFile in download)
+            {
+                progressUpdate(progress++ / total, "Downloading " + cloudFile.Path);
+                FileContainer localCopy = await CopyFile(cloudFile);
+                pathsSeen.Add(cloudFile.Path);
+                downloaded++;
+
+                CloudFileMap.Mapping mapping = fileMap.GetMapping(cloudFile.Path);
+                if (mapping == null)
+                {
+                    await fileMap.AddMapping(localCopy.Path, localCopy.MTime, cloudFile.OneDriveId, cloudFile.MTime);
+                }
+                else
+                {
+                    mapping.LocalModifiedTime = localCopy.MTime;
+                }
+            }
+
+            foreach (var pair in collision)
+            {
+                // One or both of the files was updated. Figure out which one is newer, and copy that over the old one.
+                // Note that we can't just compare MTimes alone, as OneDrive file MTimes are set to their upload time.
+
+                FileContainer localFile = pair.Item1;
+                FileContainer cloudFile = pair.Item2;
+                CloudFileMap.Mapping mapping = fileMap.GetMapping(localFile.Path);
+
+                DateTime localComparisonTime = DateTime.MinValue;
+                DateTime cloudComparisonTime = DateTime.MinValue;
+                if (localFile.MTime != mapping.LocalModifiedTime)
+                    localComparisonTime = localFile.MTime;
+                if (cloudFile.MTime != mapping.OneDriveModifiedTime)
+                    cloudComparisonTime = cloudFile.MTime;
+
+                int c = localComparisonTime.CompareTo(cloudComparisonTime);
+                if (c == 0)
+                {
+                    // Both files have the same time for comparison purposes. Just update the mapping.
+                    progressUpdate(progress++ / total, string.Empty);
+                    mapping.LocalModifiedTime = localFile.MTime;
+                    mapping.OneDriveModifiedTime = cloudFile.MTime;
+                    upToDate++;
+                }
+                else
+                {
+                    FileContainer newer, older;
+                    if (c > 0)
+                    {
+                        newer = localFile;
+                        older = cloudFile;
+                        progressUpdate(progress++ / total, "Uploading " + newer.Path);
+                        uploaded++;
+                    }
+                    else
+                    {
+                        newer = cloudFile;
+                        older = localFile;
+                        progressUpdate(progress++ / total, "Downloading " + newer.Path);
+                        downloaded++;
+                    }
+
+                    FileContainer result = await CopyFile(newer, older);
+                    if (result.Source == FileContainer.SourceType.Local)
+                    {
+                        mapping.LocalModifiedTime = result.MTime;
+                    }
+                    else
+                    {
+                        mapping.OneDriveId = result.OneDriveId;
+                        mapping.OneDriveModifiedTime = result.MTime;
+                    }
+                }
+            }
 
             progressUpdate(1.0, "Finishing up...");
 
