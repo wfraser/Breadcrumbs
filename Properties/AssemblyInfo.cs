@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Codewise.org")]
 [assembly: AssemblyProduct("Breadcrumbs")]
-[assembly: AssemblyCopyright("Copyright © William R. Fraser 2013")]
+[assembly: AssemblyCopyright("Copyright © William R. Fraser 2013-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

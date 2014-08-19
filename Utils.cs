@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Device.Location;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -242,5 +243,38 @@ namespace Breadcrumbs
         {
             LockStep(listA, listB, orderBy, (a, b, progress) => action(a, b));
         }
+
+        /// <summary>
+        /// Returns the local time (without DST correction) when the app was built.
+        /// Relies on the Visual Studio automatic version number generation.
+        /// </summary>
+        private static DateTime GetBuildDateFromVersion(Version version)
+        {
+            return new DateTime(2000, 1, 1)
+                + TimeSpan.FromDays(version.Build)
+                + TimeSpan.FromSeconds(version.Revision * 2);
+        }
+
+        public static string GetFullVersion()
+        {
+            if (s_cachedFullVersion == null)
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                string fileVersion = assembly.GetCustomAttributes<AssemblyFileVersionAttribute>().First().Version;
+                Version assemblyVersion = assembly.GetName().Version;
+                DateTime buildDate = GetBuildDateFromVersion(assemblyVersion);
+                string suffix = 
+#if DEBUG
+                    "d";
+#else
+                    "R";
+#endif
+
+                s_cachedFullVersion = string.Format("{0}.{1:yyyyMMdd-HHmm}-{2}", fileVersion, buildDate, suffix);
+            }
+            return s_cachedFullVersion;
+        }
+
+        private static string s_cachedFullVersion = null;
     }
 }

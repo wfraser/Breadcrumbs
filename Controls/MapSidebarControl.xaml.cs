@@ -171,21 +171,11 @@ namespace Breadcrumbs
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Version ver = assembly.GetName().Version;
-            string copyright = assembly.GetCustomAttributes<AssemblyCopyrightAttribute>().First().Copyright;
+            string copyright = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyCopyrightAttribute>().First().Copyright;
+            string ver = Utils.GetFullVersion();
 
             MessageBox.Show(
-                string.Format("Breadcrumbs v{0}.{1} build {2}{4} rev {3}\n", ver.Major, ver.Minor, ver.Build, ver.Revision,
-#if DEBUG
-                    "d"
-#else
-                    "R"
-#endif
-                    )
-                    + copyright
-                    + "\nhttps://github.com/wfraser/Breadcrumbs"
-                    + "\n\n:)",
+                string.Format("Breadcrumbs v{0}\n{1}\nhttps://githug.com/wfraser/Breadcrumbs\n\n:)", ver, copyright),
                 "About Breadcrumbs",
                 MessageBoxButton.OK);
         }

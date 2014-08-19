@@ -52,7 +52,7 @@ namespace Breadcrumbs
         {
             m_tracks = new List<Track>();
             Version = "1.1";
-            Creator = "Breadcrumbs/" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version
+            Creator = "Breadcrumbs/" + Utils.GetFullVersion()
                 + " WindowsPhone/" + System.Environment.OSVersion.Version;
             Dirty = false;
         }
