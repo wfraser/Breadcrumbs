@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -14,11 +15,12 @@ namespace Breadcrumbs
     // Elements or attributes not represented here will be ignored on deserialization.
     //
 
-    [XmlRoot("gpx", Namespace = GPX.Namespace)]
+    [XmlRoot("gpx", Namespace = GPX.GPXNamespace)]
     public class GPX
     {
-        public const string Namespace = "http://www.topografix.com/GPX/1/1";
-        public const string OldNamespace = "http://www.topografix.com/GPX/1/0";
+        public const string GPXNamespace = "http://www.topografix.com/GPX/1/1";
+        public const string OldGPXNamespace = "http://www.topografix.com/GPX/1/0";
+        public const string BreadcrumbsNamespace = "http://ns.codewise.org/Breadcrumbs/GPX/1/0";
 
         [XmlAttribute("version")]
         public string Version
@@ -68,10 +70,13 @@ namespace Breadcrumbs
             var settings = new XmlWriterSettings();
             settings.Indent = true;
 
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add("b", BreadcrumbsNamespace);
+
             using (var writer = XmlWriter.Create(stream, settings))
             {
-                var serializer = new XmlSerializer(typeof(GPX), Namespace);
-                serializer.Serialize(writer, this);
+                var serializer = new XmlSerializer(typeof(GPX), GPXNamespace);
+                serializer.Serialize(writer, this, namespaces);
             }
 
             Dirty = false;
@@ -87,7 +92,7 @@ namespace Breadcrumbs
             }
             catch (InvalidOperationException ex)
             {
-                if (ex.InnerException is InvalidOperationException && ex.InnerException.Message.Contains(GPX.OldNamespace))
+                if (ex.InnerException is InvalidOperationException && ex.InnerException.Message.Contains(GPX.OldGPXNamespace))
                 {
                     // This is a bit of a hack.
                     // If the deserialization fails due to the data being GPX 1.0,
@@ -101,7 +106,7 @@ namespace Breadcrumbs
                         stream.CopyTo(memStream);
                         xml = Encoding.UTF8.GetString(memStream.ToArray(), 0, (int)memStream.Length);
                     }
-                    xml = xml.Replace(GPX.OldNamespace, GPX.Namespace);
+                    xml = xml.Replace(GPX.OldGPXNamespace, GPX.GPXNamespace);
                     using (var memStream = new MemoryStream())
                     {
                         byte[] bytes = Encoding.UTF8.GetBytes(xml);
@@ -156,6 +161,8 @@ namespace Breadcrumbs
                 Longitude = coordinate.Longitude,
                 Altitude = coordinate.Altitude,
                 DateTime = coordinate.Timestamp.DateTime,
+                Accuracy = coordinate.Accuracy,
+                AltitudeAccuracy = coordinate.AltitudeAccuracy
             };
 
             m_tracks.Last().Segments[m_tracks[0].Segments.Count - 1].Points.Add(point);
@@ -245,6 +252,39 @@ namespace Breadcrumbs
                 set;
             }
 
+            [XmlElement("Accuracy", Namespace=BreadcrumbsNamespace)]
+            public double Accuracy
+            {
+                get;
+                set;
+            }
+
+            [XmlIgnore]
+            public bool AccuracySpecified
+            {
+                get { return Accuracy > 0; }
+            }
+
+            [XmlElement("AltitudeAccuracy", Namespace=BreadcrumbsNamespace)]
+            public double AltitudeAccuracyValue
+            {
+                get { return AltitudeAccuracy.HasValue ? AltitudeAccuracy.Value : double.NaN; }
+                set { AltitudeAccuracy = value; }
+            }
+
+            [XmlIgnore]
+            public double? AltitudeAccuracy
+            {
+                get;
+                set;
+            }
+
+            [XmlIgnore]
+            public bool AltitudeAccuracyValueSpecified
+            {
+                get { return AltitudeAccuracy.HasValue; }
+            }
+
             [XmlIgnore]
             public GeocoordinateEx GeocoordinateEx
             {
@@ -252,6 +292,8 @@ namespace Breadcrumbs
                 {
                     var coord = new GeocoordinateEx(Latitude, Longitude, Altitude);
                     coord.Timestamp = DateTime;
+                    coord.Accuracy = Accuracy;
+                    coord.AltitudeAccuracy = AltitudeAccuracy;
                     return coord;
                 }
             }
