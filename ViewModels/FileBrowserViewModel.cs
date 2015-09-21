@@ -35,6 +35,17 @@ namespace Breadcrumbs.ViewModels
         }
         private string m_defaultFileExtension;
 
+        public string DefaultFileName
+        {
+            get { return m_defaultFileName; }
+            set
+            {
+                m_defaultFileName = value;
+                NotifyPropertyChanged("DefaultFileName");
+            }
+        }
+        private string m_defaultFileName;
+
         public void Dismiss(IStorageFile result)
         {
             IsVisible = false;

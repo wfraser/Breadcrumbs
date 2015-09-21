@@ -27,10 +27,10 @@ namespace Breadcrumbs
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             m_viewModel = (ViewModels.FileBrowserViewModel)DataContext;
-            m_viewModel.PropertyChanged += m_viewModel_PropertyChanged;
+            m_viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
-        void m_viewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

@@ -81,7 +81,8 @@
 
             <TextBox x:Name="FileNameEntryBox"
                      Grid.Row="2"
-                     TextChanged="FileNameEntryBox_TextChanged"/>
+                     TextChanged="FileNameEntryBox_TextChanged"
+                     Text="{Binding DefaultFileName, Mode=OneWay}"/>
 
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>

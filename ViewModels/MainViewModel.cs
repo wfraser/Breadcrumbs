@@ -483,6 +483,7 @@ namespace Breadcrumbs.ViewModels
             m_fileBrowserViewModel.StartingFolder = await GetLocalGpxFolder();
             m_fileBrowserViewModel.Mode = FileBrowserMode.Save;
             m_fileBrowserViewModel.DefaultFileExtension = ".gpx";
+            m_fileBrowserViewModel.DefaultFileName = "track_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".gpx";
             m_fileBrowserViewModel.SetDismissedAction(new Action<FileBrowserViewModel, IStorageFile>((sender, result) =>
                 {
                     sender.SetDismissedAction(null);
