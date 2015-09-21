@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,6 +49,35 @@ namespace Breadcrumbs
             }
             while (current != null);
             return false;
+        }
+
+        private static double MinMaxOrDefault(IEnumerable<double?> values, double def, Func<double, double, double> selector, double startingValue)
+        {
+            bool haveValue = false;
+            double selected = startingValue;
+            foreach (double? dq in values)
+            {
+                if (dq.HasValue)
+                {
+                    haveValue = true;
+                    selected = selector(selected, dq.Value);
+                }
+            }
+
+            if (haveValue)
+                return selected;
+            else
+                return def;
+        }
+
+        public static double MaxOrDefault(this IEnumerable<double?> values, double def)
+        {
+            return MinMaxOrDefault(values, def, Math.Max, double.MinValue);
+        }
+
+        public static double MinOrDefault(this IEnumerable<double?> values, double def)
+        {
+            return MinMaxOrDefault(values, def, Math.Min, double.MaxValue);
         }
     }
 }

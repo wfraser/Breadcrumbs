@@ -190,6 +190,39 @@ namespace Breadcrumbs
             {
                 m_segments = new List<TrackSegment>();
             }
+
+            [XmlIgnore]
+            public double MinAltitude
+            {
+                get
+                {
+                    return m_segments.SelectMany(seg => seg.Points)
+                                     .Select(point => point.Altitude)
+                                     .MinOrDefault(double.NaN);
+                }
+            }
+
+            [XmlIgnore]
+            public double MaxAltitude
+            {
+                get
+                {
+                    return m_segments.SelectMany(seg => seg.Points)
+                                     .Select(point => point.Altitude)
+                                     .MaxOrDefault(double.NaN);
+                }
+            }
+
+            [XmlIgnore]
+            public double Distance
+            {
+                get
+                {
+                    IEnumerable<GeocoordinateEx> coords = m_segments.SelectMany(seg => seg.Points)
+                            .Select(seg => seg.GeocoordinateEx);
+                    return coords.Zip(coords.Skip(1), (a, b) => Utils.GreatCircleDistance(a, b)).Sum();
+                }
+            }
         }
 
         public class TrackSegment
