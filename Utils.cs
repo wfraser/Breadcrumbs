@@ -80,7 +80,7 @@ namespace Breadcrumbs
             double lat1 = ToRadians(p1.Latitude);
             double lng1 = ToRadians(p1.Longitude);
             double lat2 = ToRadians(p2.Latitude);
-            double lng2 = ToRadians(p2.Latitude);
+            double lng2 = ToRadians(p2.Longitude);
             double deltaLng = Math.Abs(lng1 - lng2);
 
             double centralAngle = Math.Atan2(
@@ -260,7 +260,7 @@ namespace Breadcrumbs
             if (s_cachedFullVersion == null)
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                string fileVersion = assembly.GetCustomAttributes<AssemblyFileVersionAttribute>().First().Version;
+                string fileVersion = assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
                 Version assemblyVersion = assembly.GetName().Version;
                 DateTime buildDate = GetBuildDateFromVersion(assemblyVersion);
                 string suffix = 
