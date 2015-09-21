@@ -119,13 +119,22 @@ namespace Breadcrumbs
 
         public void NewTrackSegment()
         {
+            Track currentTrack;
             if (m_tracks.Count == 0)
             {
-                m_tracks.Add(new Track());
+                currentTrack = new Track();
+                m_tracks.Add(currentTrack);
+            }
+            else
+            {
+                currentTrack = m_tracks.Last();
             }
 
-            m_tracks[0].Segments.Add(new TrackSegment());
-            Dirty = true;
+            if (currentTrack.Segments.Count == 0 || currentTrack.Segments.Last().Points.Count > 0)
+            {
+                currentTrack.Segments.Add(new TrackSegment());
+                Dirty = true;
+            }
         }
 
         public void AddTrackPoint(GeocoordinateEx coordinate)
@@ -149,7 +158,7 @@ namespace Breadcrumbs
                 DateTime = coordinate.Timestamp.DateTime,
             };
 
-            m_tracks[0].Segments[m_tracks[0].Segments.Count - 1].Points.Add(point);
+            m_tracks.Last().Segments[m_tracks[0].Segments.Count - 1].Points.Add(point);
             Dirty = true;
         }
 

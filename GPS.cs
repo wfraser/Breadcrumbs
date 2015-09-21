@@ -13,6 +13,7 @@ namespace Breadcrumbs
         public GPS(ViewModels.MainViewModel mainVM)
         {
             m_mainVM = mainVM;
+            m_haveFix = false;
         }
 
         public void Start()
@@ -39,6 +40,7 @@ namespace Breadcrumbs
             PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Enabled;
 
             m_mainVM.IsGpsEnabled = false;
+            HaveFix = false;
         }
 
         void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
@@ -46,27 +48,55 @@ namespace Breadcrumbs
             if (args.Position.Coordinate.PositionSource == PositionSource.Satellite)
             {
                 m_mainVM.CurrentPosition = new GeocoordinateEx(args.Position.Coordinate);
+                HaveFix = true;
             }
-            // else: ignore Cellular and WiFi sources because they're not good enough for our purposes.
+            else
+            {
+                // ignore Cellular and WiFi sources because they're not good enough for our purposes.
+                HaveFix = false;
+            }
         }
 
         void Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
         {
             switch (args.Status)
             {
-                //TODO: use this to create new track segments when GPS fix is lost.
+                case PositionStatus.NoData:
+                case PositionStatus.Initializing:
+                    HaveFix = false;
+                    break;
 
                 case PositionStatus.Disabled:
-                case PositionStatus.Initializing:
-                case PositionStatus.NoData:
+                    System.Windows.MessageBox.Show("The location service has been disabled. Please re-enable it in OS settings to use this app.");
+                    break;
+
                 case PositionStatus.NotAvailable:
+                    System.Windows.MessageBox.Show("The location service is not available on this device.");
+                    break;
+
                 case PositionStatus.NotInitialized:
                 case PositionStatus.Ready:
                     break;
             }
         }
 
+        private bool HaveFix
+        {
+            set
+            {
+                if (m_haveFix != value)
+                {
+                    m_haveFix = value;
+                    if (!value)
+                    {
+                        m_mainVM.GPX.NewTrackSegment();
+                    }
+                }
+            }
+        }
+
         private Geolocator m_geolocator;
         private ViewModels.MainViewModel m_mainVM;
+        private bool m_haveFix;
     }
 }

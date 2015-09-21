@@ -71,9 +71,7 @@ namespace Breadcrumbs.ViewModels
             {
                 if (value != m_isTrackingEnabled)
                 {
-                    m_isTrackingEnabled = value;
-
-                    if (m_isTrackingEnabled)
+                    if (!m_isTrackingEnabled)
                     {
                         // Tracking turned on after being off.
                         // Make a new track segment.
@@ -82,6 +80,7 @@ namespace Breadcrumbs.ViewModels
                         // TODO: make new visual track segment here too
                     }
 
+                    m_isTrackingEnabled = value;
                     NotifyPropertyChanged("IsTrackingEnabled");
                 }
             }
