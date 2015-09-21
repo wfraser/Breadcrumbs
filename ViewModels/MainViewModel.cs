@@ -496,6 +496,7 @@ namespace Breadcrumbs.ViewModels
                                 {
                                     using (Stream stream = prevTask.Result)
                                     {
+                                        stream.SetLength(0); // truncate the file in case we are overwriting.
                                         m_gpx.Serialize(stream);
                                     }
                                 }
