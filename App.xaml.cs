@@ -113,6 +113,8 @@ namespace Breadcrumbs
             {
                 ViewModel.LoadTrack(trackXml);
             }
+
+            ((UnitConverter)App.Current.Resources["UnitConverter"]).MainVM = ViewModel;
         }
 
         // Code to execute when the application is deactivated (sent to background)

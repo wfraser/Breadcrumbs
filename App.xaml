@@ -11,6 +11,7 @@
         <local:LocalizedStrings x:Key="LocalizedStrings"/>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:DebugValueConverter x:Key="Debug"/>
+        <local:UnitConverter x:Key="UnitConverter"/>
         <GridLength x:Key="SidebarWidth">180</GridLength><!-- per panel -->
     </Application.Resources>
 
