@@ -19,80 +19,76 @@
             <ColumnDefinition Width="{StaticResource SidebarWidth}"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Background="{StaticResource PhoneChromeBrush}">
-            <local:ImageButton x:Name="MenuButton"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/><!--  0: buttons -->
+                <RowDefinition Height="*"/>   <!--  1: spacer -->
+                <RowDefinition Height="Auto"/><!--  2 -->
+                <RowDefinition Height="Auto"/><!--  3 -->
+                <RowDefinition Height="Auto"/><!--  4 -->
+                <RowDefinition Height="Auto"/><!--  5 -->
+                <RowDefinition Height="Auto"/><!--  6 -->
+                <RowDefinition Height="Auto"/><!--  7 -->
+                <RowDefinition Height="Auto"/><!--  8 -->
+                <RowDefinition Height="Auto"/><!--  9 -->
+                <RowDefinition Height="Auto"/><!-- 10 -->
+            </Grid.RowDefinitions>
+            <StackPanel Grid.ColumnSpan="2"
+                        Background="{StaticResource PhoneChromeBrush}">
+                <local:ImageButton x:Name="MenuButton"
                                Text="Menu"
                                ImageSource="/Assets/Icons/next.png"
                                ImageWidth="32" ImageHeight="32"
                                Click="MenuButton_Click"/>
-            
-            <local:ImageButton x:Name="GpsToggle"
-                               Text="GPS"
-                               ImageSource="/Assets/Icons/transport.play.png"
-                               ImageWidth="32" ImageHeight="32"
-                               Click="GpsToggle_Click"/>
-            
-            <local:ImageButton x:Name="TrackToggle"
+
+                <local:ImageButton x:Name="TrackToggle"
                                Text="Track"
                                ImageSource="/Assets/Icons/transport.play.png"
                                ImageWidth="32" ImageHeight="32"
                                Click="TrackToggle_Click"/>
+            </StackPanel>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/><!-- 0 -->
-                    <RowDefinition Height="Auto"/><!-- 1 -->
-                    <RowDefinition Height="Auto"/><!-- 2 -->
-                    <RowDefinition Height="Auto"/><!-- 3 -->
-                    <RowDefinition Height="Auto"/><!-- 4 -->
-                    <RowDefinition Height="Auto"/><!-- 5 -->
-                    <RowDefinition Height="Auto"/><!-- 6 -->
-                    <RowDefinition Height="Auto"/><!-- 7 -->
-                    <RowDefinition Height="Auto"/><!-- 8 -->
-                </Grid.RowDefinitions>
+            <TextBlock Grid.Row="2" Text="Lat: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="3" Text="Lng: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="4" Text="Alt: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="5" Text="Spd: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="6" Text="Hdg: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="7" Text="Acc: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="8" Text="Src: " HorizontalAlignment="Right"/>
 
-                <TextBlock Grid.Row="0" Text="Lat: " HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="1" Text="Lng: " HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="2" Text="Alt: " HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="3" Text="Spd: " HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="4" Text="Hdg: " HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="5" Text="Acc: " HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="6" Text="Src: " HorizontalAlignment="Right"/>
-
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding MainVM.Latitude,  FallbackValue='-'}"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MainVM.Longitude, FallbackValue='-'}"/>
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MainVM.Altitude,  FallbackValue='-'}"/>
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding MainVM.Speed,     FallbackValue='-'}"/>
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MainVM.Heading,   FallbackValue='-'}"/>
-                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MainVM.Accuracy,  FallbackValue='-'}"/>
-                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding MainVM.Source,    FallbackValue='No Data'}"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MainVM.Latitude,  FallbackValue='-'}"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding MainVM.Longitude, FallbackValue='-'}"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MainVM.Altitude,  FallbackValue='-'}"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MainVM.Speed,     FallbackValue='-'}"/>
+            <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding MainVM.Heading,   FallbackValue='-'}"/>
+            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding MainVM.Accuracy,  FallbackValue='-'}"/>
+            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding MainVM.Source,    FallbackValue='No Data'}"/>
                 
-                <Grid Grid.Row="7" Grid.ColumnSpan="2"
-                      HorizontalAlignment="Stretch"
-                      Margin="5,0,5,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>       <!-- hour -->
-                        <ColumnDefinition Width="Auto"/>    <!-- ":" -->
-                        <ColumnDefinition Width="*"/>       <!-- minute -->
-                        <ColumnDefinition Width="Auto"/>    <!-- ":" -->
-                        <ColumnDefinition Width="*"/>       <!-- second -->
-                        <ColumnDefinition Width="Auto"/>    <!-- offset -->
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:HH}', TargetNullValue='--', FallbackValue='--'}" TextAlignment="Center"/>
-                    <TextBlock Grid.Column="1" Text=":"/>
-                    <TextBlock Grid.Column="2" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:mm}', TargetNullValue='--', FallbackValue='--'}" TextAlignment="Center"/>
-                    <TextBlock Grid.Column="3" Text=":"/>
-                    <TextBlock Grid.Column="4" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:ss}', TargetNullValue='--', FallbackValue='--'}" TextAlignment="Center"/>
-                    <TextBlock Grid.Column="5" Text="{Binding MainVM.Timestamp, StringFormat='{} {0:zzz}', TargetNullValue='+00:00', FallbackValue='+00:00'}"/>
-                </Grid>
-
-                <local:BatteryStatusControl Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <Grid Grid.Row="9" Grid.ColumnSpan="2"
+                    HorizontalAlignment="Stretch"
+                    Margin="5,0,5,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>       <!-- hour -->
+                    <ColumnDefinition Width="Auto"/>    <!-- ":" -->
+                    <ColumnDefinition Width="*"/>       <!-- minute -->
+                    <ColumnDefinition Width="Auto"/>    <!-- ":" -->
+                    <ColumnDefinition Width="*"/>       <!-- second -->
+                    <ColumnDefinition Width="Auto"/>    <!-- offset -->
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:HH}', TargetNullValue='--', FallbackValue='--'}" TextAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text=":"/>
+                <TextBlock Grid.Column="2" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:mm}', TargetNullValue='--', FallbackValue='--'}" TextAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text=":"/>
+                <TextBlock Grid.Column="4" Text="{Binding MainVM.Timestamp, StringFormat='{}{0:ss}', TargetNullValue='--', FallbackValue='--'}" TextAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="{Binding MainVM.Timestamp, StringFormat='{} {0:zzz}', TargetNullValue='+00:00', FallbackValue='+00:00'}"/>
             </Grid>
-        </StackPanel>
+
+            <local:BatteryStatusControl Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2"/>
+        </Grid>
         
         <Border BorderBrush="#333333"
                 BorderThickness="1,0,0,0"
@@ -105,6 +101,12 @@
                     <Button x:Name="MapToggle"
                             Content="Map Type"
                             Click="MapToggle_Click"/>
+
+                    <local:ImageButton x:Name="GpsToggle"
+                               Text="GPS"
+                               ImageSource="/Assets/Icons/transport.play.png"
+                               ImageWidth="32" ImageHeight="32"
+                               Click="GpsToggle_Click"/>
 
                     <Button x:Name="ClearButton"
                             Content="Clear Track"
