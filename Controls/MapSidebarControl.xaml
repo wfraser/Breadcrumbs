@@ -36,6 +36,9 @@
                 <RowDefinition Height="Auto"/><!--  8 -->
                 <RowDefinition Height="Auto"/><!--  9 -->
                 <RowDefinition Height="Auto"/><!-- 10 -->
+                <RowDefinition Height="Auto"/><!-- 11 -->
+                <RowDefinition Height="*"/>   <!-- 12: spacer -->
+                <RowDefinition Height="Auto"/><!-- 13: battery -->
             </Grid.RowDefinitions>
             <StackPanel Grid.ColumnSpan="2"
                         Background="{StaticResource PhoneChromeBrush}">
@@ -55,20 +58,26 @@
             <TextBlock Grid.Row="2" Text="Lat: " HorizontalAlignment="Right"/>
             <TextBlock Grid.Row="3" Text="Lng: " HorizontalAlignment="Right"/>
             <TextBlock Grid.Row="4" Text="Alt: " HorizontalAlignment="Right"/>
-            <TextBlock Grid.Row="5" Text="Spd: " HorizontalAlignment="Right"/>
-            <TextBlock Grid.Row="6" Text="Hdg: " HorizontalAlignment="Right"/>
-            <TextBlock Grid.Row="7" Text="Acc: " HorizontalAlignment="Right"/>
-            <TextBlock Grid.Row="8" Text="Src: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="5" Text="ΔAlt: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="6" Text="Dst: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="7" Text="Spd: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="8" Text="Hdg: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="9" Text="Acc: " HorizontalAlignment="Right"/>
+            <TextBlock Grid.Row="10" Text="Src: " HorizontalAlignment="Right"/>
+            
 
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MainVM.Latitude,  FallbackValue='-'}"/>
             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding MainVM.Longitude, FallbackValue='-'}"/>
             <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MainVM.Altitude,  FallbackValue='-'}"/>
-            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MainVM.Speed,     FallbackValue='-'}"/>
-            <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding MainVM.Heading,   FallbackValue='-'}"/>
-            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding MainVM.Accuracy,  FallbackValue='-'}"/>
-            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding MainVM.Source,    FallbackValue='No Data'}"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MainVM.ElevationGain, FallbackValue='-'}"/>
+            <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding MainVM.Distance,  FallbackValue='-'}"/>
+            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding MainVM.Speed,     FallbackValue='-'}"/>
+            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding MainVM.Heading,   FallbackValue='-'}"/>
+            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding MainVM.Accuracy,  FallbackValue='-'}"/>
+            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding MainVM.Source,    FallbackValue='No Data'}"/>
+            
                 
-            <Grid Grid.Row="9" Grid.ColumnSpan="2"
+            <Grid Grid.Row="11" Grid.ColumnSpan="2"
                     HorizontalAlignment="Stretch"
                     Margin="5,0,5,0">
                 <Grid.ColumnDefinitions>
@@ -87,7 +96,7 @@
                 <TextBlock Grid.Column="5" Text="{Binding MainVM.Timestamp, StringFormat='{} {0:zzz}', TargetNullValue='+00:00', FallbackValue='+00:00'}"/>
             </Grid>
 
-            <local:BatteryStatusControl Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <local:BatteryStatusControl Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2"/>
         </Grid>
         
         <Border BorderBrush="#333333"
