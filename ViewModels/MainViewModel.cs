@@ -254,7 +254,9 @@ namespace Breadcrumbs.ViewModels
         {
             get
             {
+#if DEBUG
                 m_locationRead.Set();
+#endif
                 return m_currentPosition;
             }
 
@@ -310,10 +312,12 @@ namespace Breadcrumbs.ViewModels
             }
         }
 
+#if DEBUG
         internal ManualResetEvent LocationReadEvent
         {
             get { return m_locationRead; }
         }
+#endif
 
         public MainViewModel()
         {
@@ -327,7 +331,9 @@ namespace Breadcrumbs.ViewModels
             m_units = UnitMode.Imperial;
             m_coordMode = CoordinateMode.DMS;
 
+#if DEBUG
             m_locationRead = new ManualResetEvent(false);
+#endif
 
             // Set up a timer to auto-save the GPX every 1 minute as long as it's recording.
             m_autosaveTimer = new DispatcherTimer();
@@ -676,8 +682,9 @@ namespace Breadcrumbs.ViewModels
         private Lazy<CloudSync> m_cloudSync;
         private DispatcherTimer m_autosaveTimer;
 
-        // For testing
+#if DEBUG
         private ManualResetEvent m_locationRead;
+#endif
 
     }
 }
