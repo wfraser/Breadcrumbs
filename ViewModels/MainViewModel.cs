@@ -144,7 +144,7 @@ namespace Breadcrumbs.ViewModels
                     case UnitMode.Metric:
                         return Math.Floor(alt.Value).ToString() + " m";
                     case UnitMode.Imperial:
-                        return Math.Floor(alt.Value * 3.28084).ToString() + " ft";
+                        return Math.Floor(Utils.MetersToFeet(alt.Value)).ToString() + " ft";
                 }
                 return "error";
                 //return "205 ft";
@@ -169,9 +169,9 @@ namespace Breadcrumbs.ViewModels
                 switch (m_units)
                 {
                     case UnitMode.Metric:
-                        return Math.Floor(spd.Value * 3.6).ToString() + " km/h";
+                        return Math.Floor(Utils.MetersPerSecondToKMH(spd.Value)).ToString() + " km/h";
                     case UnitMode.Imperial:
-                        return Math.Floor(spd.Value * 2.237).ToString() + " MPH";
+                        return Math.Floor(Utils.MetersPerSecondToMPH(spd.Value)).ToString() + " MPH";
                 }
                 return "error";
                 //return "88 MPH";
@@ -213,7 +213,7 @@ namespace Breadcrumbs.ViewModels
                     case UnitMode.Metric:
                         return Math.Floor(accuracy).ToString() + " m";
                     case UnitMode.Imperial:
-                        return Math.Floor(accuracy * 3.28084).ToString() + " ft";
+                        return Math.Floor(Utils.MetersToFeet(accuracy)).ToString() + " ft";
                 }
                 return "error";
             }
@@ -236,6 +236,63 @@ namespace Breadcrumbs.ViewModels
                         return "WiFi";
                 }
                 return "error";
+            }
+        }
+
+        public string Distance
+        {
+            get
+            {
+                if (m_gpx.Tracks.Count > 0)
+                {
+                    GPX.Track trk = m_gpx.Tracks.Last();
+                    if (trk.Segments.Any(seg => seg.Points.Count > 0))
+                    {
+                        double meters = m_gpx.Tracks.Last().Distance;
+                        switch (m_units)
+                        {
+                            case UnitMode.Metric:
+                                if (meters >= 1000)
+                                    return Math.Round(meters / 1000, 2) + " km";
+                                else
+                                    return Math.Floor(meters) + " m";
+                            case UnitMode.Imperial:
+                                double feet = Utils.MetersToFeet(meters);
+                                double miles = Utils.FeetToMiles(feet);
+                                if (miles >= 1)
+                                    return Math.Round(miles, 2) + " mi";
+                                else
+                                    return Math.Floor(feet) + " ft";
+                        }
+                        return "error";
+                    }
+                }
+                return "-";
+            }
+        }
+
+        public string ElevationGain
+        {
+            get
+            {
+                if (m_gpx.Tracks.Count > 0)
+                {
+                    GPX.Track trk = m_gpx.Tracks.Last();
+                    if (trk.Segments.Any(seg => seg.Points.Count > 0))
+                    {
+                        double meters = trk.MaxAltitude - trk.MinAltitude;
+                        switch (m_units)
+                        {
+                            // Don't do kilometers or miles for this one.
+                            case UnitMode.Metric:
+                                return Math.Floor(meters) + " m";
+                            case UnitMode.Imperial:
+                                return Math.Floor(Utils.MetersToFeet(meters)) + " ft";
+                        }
+                        return "error";
+                    }
+                }
+                return "-";
             }
         }
 
@@ -278,6 +335,8 @@ namespace Breadcrumbs.ViewModels
                 NotifyPropertyChanged("Heading");
                 NotifyPropertyChanged("Accuracy");
                 NotifyPropertyChanged("Source");
+                NotifyPropertyChanged("Distance");
+                NotifyPropertyChanged("ElevationGain");
                 NotifyPropertyChanged("Timestamp");
             }
         }

@@ -39,6 +39,26 @@ namespace Breadcrumbs
             return radians * (180.0 / Math.PI);
         }
 
+        public static double MetersToFeet(double meters)
+        {
+            return meters * 3.28084;
+        }
+
+        public static double FeetToMiles(double feet)
+        {
+            return feet / 5280;
+        }
+
+        public static double MetersPerSecondToKMH(double metersPerSecond)
+        {
+            return metersPerSecond * 3.6;
+        }
+
+        public static double MetersPerSecondToMPH(double metersPerSecond)
+        {
+            return metersPerSecond * 2.237;
+        }
+
         public static GeoCoordinateCollection MakeCircle(GeoCoordinate center, double radiusMeters)
         {
             if (center == null)
