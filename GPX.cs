@@ -165,7 +165,7 @@ namespace Breadcrumbs
                 AltitudeAccuracy = coordinate.AltitudeAccuracy
             };
 
-            m_tracks.Last().Segments[m_tracks[0].Segments.Count - 1].Points.Add(point);
+            m_tracks.Last().AddPoint(point);
             Dirty = true;
         }
 
@@ -196,32 +196,122 @@ namespace Breadcrumbs
             {
                 get
                 {
-                    return m_segments.SelectMany(seg => seg.Points)
-                                     .Select(point => point.Altitude)
-                                     .MinOrDefault(double.NaN);
+                    lock (m_minAltitudeMutex)
+                    {
+                        if (!m_minAltitude.HasValue)
+                        {
+                            double d = m_segments.SelectMany(seg => seg.Points)
+                                         .Select(point => point.Altitude)
+                                         .MinOrDefault(double.NaN);
+                            if (d != double.NaN)
+                                m_minAltitude = d;
+
+                            return d;
+                        }
+                        else
+                        {
+                            return m_minAltitude.Value;
+                        }
+                    }
                 }
             }
+            private double? m_minAltitude;
+            private object m_minAltitudeMutex = new object();
 
             [XmlIgnore]
             public double MaxAltitude
             {
                 get
                 {
-                    return m_segments.SelectMany(seg => seg.Points)
-                                     .Select(point => point.Altitude)
-                                     .MaxOrDefault(double.NaN);
+                    lock (m_maxAltitudeMutex)
+                    {
+                        if (!m_maxAltitude.HasValue)
+                        {
+                            double d = m_segments.SelectMany(seg => seg.Points)
+                                         .Select(point => point.Altitude)
+                                         .MaxOrDefault(double.NaN);
+                            if (d != double.NaN)
+                                m_maxAltitude = d;
+
+                            return d;
+                        }
+                        else
+                        {
+                            return m_maxAltitude.Value;
+                        }
+                    }
                 }
             }
+            private double? m_maxAltitude;
+            private object m_maxAltitudeMutex = new object();
 
             [XmlIgnore]
             public double Distance
             {
                 get
                 {
-                    IEnumerable<GeocoordinateEx> coords = m_segments.SelectMany(seg => seg.Points)
-                            .Select(seg => seg.GeocoordinateEx);
-                    return coords.Zip(coords.Skip(1), (a, b) => Utils.GreatCircleDistance(a, b)).Sum();
+                    lock (m_distanceMutex)
+                    {
+                        if (!m_distance.HasValue)
+                        {
+                            IEnumerable<GeocoordinateEx> coords = m_segments.SelectMany(seg => seg.Points)
+                                    .Select(seg => seg.GeocoordinateEx);
+                            double d = coords.Zip(coords.Skip(1), (a, b) => Utils.GreatCircleDistance(a, b)).Sum();
+                            //TODO: what happens if there's only one point?
+                            m_distance = d;
+                            return d;
+                        }
+                        else
+                        {
+                            return m_distance.Value;
+                        }
+                    }
                 }
+            }
+            private double? m_distance;
+            private object m_distanceMutex = new object();
+
+            public void AddPoint(TrackPoint point)
+            {
+                TrackSegment seg;
+
+                if (m_segments.Count == 0)
+                {
+                    seg = new TrackSegment();
+                    m_segments.Add(seg);
+                }
+                else
+                {
+                    seg = m_segments.Last();
+                }
+
+                // Update stats
+
+                if (point.Altitude.HasValue)
+                {
+                    lock (m_maxAltitudeMutex)
+                    {
+                        if (m_maxAltitude.HasValue)
+                            m_maxAltitude = Math.Max(m_maxAltitude.Value, point.Altitude.Value);
+                    }
+                    lock (m_minAltitudeMutex)
+                    {
+                        if (m_minAltitude.HasValue)
+                            m_minAltitude = Math.Min(m_minAltitude.Value, point.Altitude.Value);
+                    }
+                }
+                
+                lock (m_distanceMutex)
+                {
+                    if (m_distance.HasValue && seg.Points.Count > 0)
+                    {
+                        m_distance += Utils.GreatCircleDistance(
+                            seg.Points.Last().GeocoordinateEx,
+                            point.GeocoordinateEx);
+                    }
+                }
+
+                seg.Points.Add(point);
             }
         }
 
