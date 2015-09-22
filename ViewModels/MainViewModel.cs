@@ -333,6 +333,8 @@ namespace Breadcrumbs.ViewModels
             m_autosaveTimer = new DispatcherTimer();
             m_autosaveTimer.Interval = TimeSpan.FromMinutes(1.0);
             m_autosaveTimer.Tick += new EventHandler((sender, e) => AutosaveGPX());
+
+            ToggleGps();
         }
 
         public void AutosaveGPX()
