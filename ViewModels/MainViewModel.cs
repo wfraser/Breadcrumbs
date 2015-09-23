@@ -52,6 +52,11 @@ namespace Breadcrumbs.ViewModels
         public GPX GPX
         {
             get { return m_gpx; }
+            private set
+            {
+                m_gpx = value;
+                NotifyPropertyChanged("GPX");
+            }
         }
 
         public bool IsGpsEnabled
@@ -483,8 +488,7 @@ namespace Breadcrumbs.ViewModels
                     return;
             }
 
-            m_gpx.ClearTracks();
-            NotifyPropertyChanged("GPX");
+            GPX = new GPX();
         }
 
         public void CycleMapType()
@@ -520,10 +524,7 @@ namespace Breadcrumbs.ViewModels
                     mode = UnitMode.Imperial;
                     break;
             }
-            m_units = mode;
-            NotifyPropertyChanged("Altitude");
-            NotifyPropertyChanged("Accuracy");
-            NotifyPropertyChanged("Speed");
+            UnitMode = mode;
         }
 
         public void CycleCoordinateMode()
@@ -538,10 +539,7 @@ namespace Breadcrumbs.ViewModels
                     mode = CoordinateMode.Decimal;
                     break;
             }
-            m_coordMode = mode;
-            NotifyPropertyChanged("Latitude");
-            NotifyPropertyChanged("Longitude");
-            NotifyPropertyChanged("Heading");
+            CoordinateMode = mode;
         }
 
         public async void SaveTrack()
@@ -601,10 +599,7 @@ namespace Breadcrumbs.ViewModels
                         sender.SetDismissedAction(null);
                         if (result != null)
                         {
-                            m_gpx = GPX.Deserialize(await result.OpenStreamForReadAsync());
-
-                            // Notify the map that it needs to re-draw.
-                            NotifyPropertyChanged("GPX");
+                            GPX = GPX.Deserialize(await result.OpenStreamForReadAsync());
                         }
                     }));
 
@@ -613,10 +608,7 @@ namespace Breadcrumbs.ViewModels
             else
             {
                 var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(gpxData));
-                m_gpx = GPX.Deserialize(stream);
-
-                // Notify the map that it needs to re-draw.
-                NotifyPropertyChanged("GPX");
+                GPX = GPX.Deserialize(stream);
             }
         }
 
