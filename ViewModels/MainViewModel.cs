@@ -372,6 +372,8 @@ namespace Breadcrumbs.ViewModels
                     NotifyPropertyChanged("Altitude");
                     NotifyPropertyChanged("Speed");
                     NotifyPropertyChanged("Accuracy");
+                    NotifyPropertyChanged("Distance");
+                    NotifyPropertyChanged("ElevationGain");
                 }
             }
         }
